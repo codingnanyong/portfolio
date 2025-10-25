@@ -721,7 +721,7 @@ kubectl port-forward -n kubernetes-dashboard service/kubernetes-dashboard 8443:4
 실시간 데이터 파이프라인과 마이크로서비스 아키텍처를 직접 설계하고 구축한 경험을 바탕으로,  
 데이터 신뢰성과 운영 효율성을 동시에 달성할 수 있는 시스템을 지향합니다.  
 
-📎 GitHub Repository: [https://github.com/codingnanyong/portfolio](https://github.com/codingnanyong/portfolio)
+📎 GitHub Repository: [https://github.com/codingnanyong/portfolio](https://github.com/codingnanyong/portfolio)  
 📧 Email: ryu.coding1@gmail.com 
 
 ---
