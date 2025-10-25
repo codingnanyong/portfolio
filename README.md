@@ -716,13 +716,13 @@ kubectl port-forward -n kubernetes-dashboard service/kubernetes-dashboard 8443:4
 
 ## 👤 작성자
 
-**Data Engineer Portfolio**
+**류태현 | Data Engineer**
 
-이 프로젝트는 실제 제조 현장의 IoT 데이터를 처리하는 엔터프라이즈급 데이터 플랫폼의 핵심 기능을 구현한 포트폴리오입니다.
+실시간 데이터 파이프라인과 마이크로서비스 아키텍처를 직접 설계하고 구축한 경험을 바탕으로,  
+데이터 신뢰성과 운영 효율성을 동시에 달성할 수 있는 시스템을 지향합니다.  
 
-## 📄 라이선스
-
-이 프로젝트는 포트폴리오 목적으로 작성되었습니다.
+📎 GitHub Repository: [https://github.com/codingnanyong/portfolio](https://github.com/codingnanyong/portfolio)
+📧 Email: ryu.coding1@gmail.com 
 
 ---
 
