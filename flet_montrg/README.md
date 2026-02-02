@@ -107,7 +107,7 @@ Each service exposes interactive docs via Swagger UI:
 └───────────────────────┬───────────────────────────────────┘
                         │
                         v
-                PostgreSQL / TimescaleDB
+            PostgreSQL / TimescaleDB
 ```
 
 ### Inter-service communication

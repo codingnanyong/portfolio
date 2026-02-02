@@ -92,9 +92,9 @@ IoT Sensors → PostgreSQL (Raw) → Airflow DAGs → PostgreSQL (Processed/Time
 |  Integrated-Swagger(30005)                                |
 |                                                           |
 └───────────────────────┬───────────────────────────────────┘
-                         |
-                         v
-                PostgreSQL / TimescaleDB
+                        |
+                        v
+            PostgreSQL / TimescaleDB
 ```
 
 See each service directory’s README for API, run instructions, and schema.
