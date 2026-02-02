@@ -74,9 +74,9 @@ IoT Sensors → PostgreSQL (Raw) → Airflow DAGs → PostgreSQL (Processed/Time
 | sensor-threshold-mapping-service | 30011 | Sensor–threshold mapping |
 
 ```text
-+-----------------------------------------------------------+
+┌───────────────────────────────────────────────────────────┐
 |                Kubernetes Cluster (Kind)                  |
-+-----------------------------------------------------------+
+├───────────────────────────────────────────────────────────┤
 |                                                           |
 |  Thresholds(30001)      Location(30002)                   |
 |        \                    /                             |
@@ -91,7 +91,7 @@ IoT Sensors → PostgreSQL (Raw) → Airflow DAGs → PostgreSQL (Processed/Time
 |                                                           |
 |  Integrated-Swagger(30005)                                |
 |                                                           |
-+-----------------------------------------------------------+
+└───────────────────────┬───────────────────────────────────┘
                          |
                          v
                 PostgreSQL / TimescaleDB

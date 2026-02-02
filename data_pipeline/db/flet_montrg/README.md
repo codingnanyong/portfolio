@@ -17,7 +17,7 @@ This directory contains the database schema definitions for a Python-based monit
 
 ## Project Structure
 
-```
+``` text
 flet_montrg/
 ├── schema/                     # Database schema files
 │   ├── alert_subscriptions.sql # Alert subscription management
@@ -35,11 +35,13 @@ flet_montrg/
 The application uses a relational database with the following main entities:
 
 ### Core Tables
+
 - **sensor**: Device information and configuration
 - **temperature**: Temperature readings from sensors
 - **location**: Sensor location information
 
 ### Alert System
+
 - **alerts**: Alert history and notifications
 - **thresholds**: Customizable alert thresholds
 - **alert_subscriptions**: User notification preferences
@@ -47,12 +49,13 @@ The application uses a relational database with the following main entities:
 ## Database Setup
 
 1. **Schema Creation**: Execute the SQL files in the `sql/` directory in the following order:
+
    ```sql
    -- 1. Create base tables
    sensor.sql
    location.sql
    temperature.sql
-   
+
    -- 2. Create alert system tables
    thresholds.sql
    alerts.sql
@@ -66,6 +69,7 @@ The application uses a relational database with the following main entities:
 ## Integration with Airflow
 
 This database schema is part of the larger Airflow data pipeline infrastructure:
+
 - **Data Ingestion**: Airflow DAGs collect data from sensors
 - **Data Processing**: Transform and validate sensor data
 - **Alert Generation**: Trigger alerts based on thresholds

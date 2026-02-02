@@ -1,17 +1,17 @@
-# API Dashboard Service
+# API Dashboard Service (Integrated Swagger)
 
-중앙집중식 API 모니터링 대시보드 서비스입니다. Kubernetes 클러스터에서 실행되는 모든 마이크로서비스를 모니터링하고 상태를 시각화합니다.
+Centralized API monitoring dashboard. Monitors and visualizes the status of all microservices running in the Kubernetes cluster.
 
-## 📋 기능
+## 📋 Features
 
-- **실시간 서비스 상태 모니터링**: 각 API 서비스의 헬스체크 및 상태 확인
-- **서비스 디스커버리**: Kubernetes에서 자동으로 서비스 검색
-- **API 엔드포인트 모니터링**: 각 서비스의 API 엔드포인트 상태 확인
-- **성능 메트릭**: 응답 시간, 에러율, 요청 수 등 모니터링
-- **웹 대시보드**: Flet 기반 인터랙티브 웹 UI
-- **실시간 업데이트**: 자동 새로고침 기능
+- **Real-time service status**: Health and status of each API service
+- **Service discovery**: Auto-discovery of services from Kubernetes
+- **Endpoint monitoring**: Status of each service’s API endpoints
+- **Performance metrics**: Response time, error rate, request count
+- **Web dashboard**: Flet-based interactive UI
+- **Auto-refresh**: Live updates
 
-## 🚀 모니터링 대상 서비스
+## 🚀 Monitored Services
 
 - aggregation-service
 - alert-service
@@ -20,34 +20,25 @@
 - realtime-service
 - thresholds-service
 
-## 📁 디렉토리 구조
+## 📁 Structure
 
-```
+```text
 api-dashboard-service/
 ├── app/
-│   ├── __init__.py
-│   ├── main.py                 # FastAPI 애플리케이션 진입점
-│   ├── api/
-│   │   ├── __init__.py
-│   │   └── routes/
-│   │       ├── __init__.py
-│   │       ├── dashboard.py    # 대시보드 API 엔드포인트
-│   │       ├── services.py     # 서비스 상태 API
-│   │       └── metrics.py      # 메트릭 API
+│   ├── main.py                 # FastAPI entry
+│   ├── api/routes/
+│   │   ├── dashboard.py        # Dashboard API
+│   │   ├── services.py         # Service status API
+│   │   └── metrics.py          # Metrics API
 │   ├── core/
-│   │   ├── __init__.py
-│   │   ├── config.py           # 설정 관리
-│   │   ├── logging_config.py   # 로깅 설정
-│   │   └── kubernetes.py       # k8s 클라이언트
+│   │   ├── config.py
+│   │   ├── logging_config.py
+│   │   └── kubernetes.py       # K8s client
 │   ├── models/
-│   │   ├── __init__.py
-│   │   ├── service.py          # 서비스 모델
-│   │   └── metric.py           # 메트릭 모델
 │   ├── services/
-│   │   ├── __init__.py
-│   │   ├── dashboard.py        # Flet 대시보드
-│   │   ├── monitor.py          # 서비스 모니터링
-│   │   └── discovery.py        # 서비스 디스커버리
+│   │   ├── dashboard.py        # Flet dashboard
+│   │   ├── monitor.py
+│   │   └── discovery.py
 ├── tests/
 ├── Dockerfile
 ├── requirements.txt
@@ -55,76 +46,70 @@ api-dashboard-service/
 └── README.md
 ```
 
-## 🛠️ 설치 및 실행
+## 🛠️ Install & Run
 
-### 로컬 개발 환경
+### Local
 
 ```bash
-# 의존성 설치
 pip install -r requirements.txt
-
-# 환경 변수 설정
 cp env.example .env
-# .env 파일을 편집하여 필요한 설정 추가
-
-# 개발 서버 실행
 uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
-### Docker 실행
+### Docker
 
 ```bash
-# Docker 이미지 빌드
 docker build -t api-dashboard-service .
-
-# 컨테이너 실행
 docker run -p 8000:8000 -p 8080:8080 api-dashboard-service
 ```
 
-### Kubernetes 배포
+### Kubernetes
 
 ```bash
 kubectl apply -f ../k8s/api-dashboard/
 ```
 
-## 🌐 접근 방법
+## 🌐 Access
 
-- **API 문서**: http://localhost:8000/docs
-- **대시보드 UI**: http://localhost:8080
-- **헬스체크**: http://localhost:8000/health
-- **메트릭**: http://localhost:8000/metrics
+- **API docs**: [http://localhost:8000/docs]
+- **Dashboard UI**: [http://localhost:8080]
+- **Health**: [http://localhost:8000/health]
+- **Metrics**: [http://localhost:8000/metrics]
 
-## 📊 API 엔드포인트
+## 📊 API Endpoints
 
-### 대시보드 API
-- `GET /api/v1/dashboard/services` - 모든 서비스 상태 조회
-- `GET /api/v1/dashboard/overview` - 대시보드 개요 정보
+### Dashboard
 
-### 서비스 모니터링 API
-- `GET /api/v1/services` - 모니터링 대상 서비스 목록
-- `GET /api/v1/services/{service_name}/status` - 특정 서비스 상태
-- `GET /api/v1/services/{service_name}/health` - 특정 서비스 헬스체크
+- `GET /api/v1/dashboard/services` — All service status
+- `GET /api/v1/dashboard/overview` — Overview
 
-### 메트릭 API
-- `GET /api/v1/metrics/overview` - 전체 메트릭 개요
-- `GET /api/v1/metrics/{service_name}` - 특정 서비스 메트릭
+### Service monitoring
 
-## 🔧 환경 변수
+- `GET /api/v1/services` — Monitored services list
+- `GET /api/v1/services/{service_name}/status` — Service status
+- `GET /api/v1/services/{service_name}/health` — Health check
 
-주요 환경 변수는 `env.example` 파일을 참조하세요.
+### Metrics
 
-## 📈 모니터링 기능
+- `GET /api/v1/metrics/overview` — Overall metrics
+- `GET /api/v1/metrics/{service_name}` — Per-service metrics
 
-1. **서비스 상태**: 각 서비스의 온라인/오프라인 상태
-2. **API 엔드포인트**: 각 서비스의 주요 API 엔드포인트 상태
-3. **성능 메트릭**: 응답 시간, 처리량, 에러율
-4. **리소스 모니터링**: CPU, 메모리 사용률 (가능한 경우)
-5. **알림**: 서비스 장애 시 알림 (향후 구현)
+## 🔧 Environment Variables
 
-## 🚀 향후 개선 사항
+See `env.example`.
 
-- [ ] 실시간 알림 기능
-- [ ] 히스토리 데이터 저장
-- [ ] 커스텀 대시보드 구성
-- [ ] 서비스별 SLA 모니터링
-- [ ] 로그 통합 뷰어
+## 📈 Monitoring
+
+1. Service status (online/offline)
+2. API endpoint status per service
+3. Performance: response time, throughput, error rate
+4. Resource usage (CPU, memory where available)
+5. Alerts on failure (planned)
+
+## 🚀 Roadmap
+
+- [ ] Real-time alerts
+- [ ] History storage
+- [ ] Custom dashboard layout
+- [ ] Per-service SLA monitoring
+- [ ] Integrated log viewer

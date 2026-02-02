@@ -9,7 +9,7 @@ Oracle Instant Client Basic 패키지가 필요합니다.
 ## 다운로드 방법
 
 1. Oracle 공식 웹사이트 방문:
-   https://www.oracle.com/database/technologies/instant-client/linux-x86-64-downloads.html
+   [https://www.oracle.com/database/technologies/instant-client/linux-x86-64-downloads.html]
 
 2. **Instant Client Basic** 패키지 다운로드
    - 버전: 23.7.0.25.01 (또는 최신 버전)
@@ -39,6 +39,7 @@ export LD_LIBRARY_PATH=/home/de/apps/airflow/oracle/instantclient_23_7:$LD_LIBRA
 ## 문제 해결
 
 Oracle Instant Client 관련 오류가 발생하면:
+
 1. LD_LIBRARY_PATH가 올바르게 설정되었는지 확인
 2. Instant Client 버전이 호환되는지 확인
 3. 필요한 의존성 패키지가 설치되어 있는지 확인
