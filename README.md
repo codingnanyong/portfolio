@@ -73,21 +73,27 @@ IoT Sensors → PostgreSQL (Raw) → Airflow DAGs → PostgreSQL (Processed/Time
 | alert-notification-service | 30009 | 알림 발송 이력 |
 | sensor-threshold-mapping-service | 30011 | 센서-임계치 매핑 |
 
-```bash
-┌─────────────────────────────────────────────────────────────────┐
-│              Kubernetes Cluster (Kind)                           │
-├─────────────────────────────────────────────────────────────────┤
-│  Thresholds(30001)   Location(30002)                             │
-│         \                  /                                     │
-│          └──► Sensor-Threshold-Mapping(30011)                    │
-│                        │                                         │
-│          Realtime(30003) ──► Aggregation(30004)                   │
-│                                                                  │
-│  Alert(30007) ◄──► Alert-Subscription(30008) ──► Alert-Notification(30009) │
-│  Integrated-Swagger(30005)                                       │
-└─────────────────────────────────────────────────────────────────┘
-                        │
-                        ▼
+```text
++-----------------------------------------------------------+
+|                Kubernetes Cluster (Kind)                 |
++-----------------------------------------------------------+
+|                                                           |
+|  Thresholds(30001)      Location(30002)                  |
+|        \                    /                            |
+|         +---> Sensor-Threshold-Mapping(30011)            |
+|                         |                                |
+|               Realtime(30003) ---> Aggregation(30004)    |
+|                                                           |
+|  Alert(30007) <--> Alert-Subscription(30008)             |
+|                              |                           |
+|                              v                           |
+|                   Alert-Notification(30009)              |
+|                                                           |
+|  Integrated-Swagger(30005)                               |
+|                                                           |
++-----------------------------------------------------------+
+                         |
+                         v
                 PostgreSQL / TimescaleDB
 ```
 
