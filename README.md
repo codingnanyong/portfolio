@@ -7,7 +7,8 @@
 [![Apache Airflow](https://img.shields.io/badge/Apache%20Airflow-2.10.3-017CEE?logo=apache-airflow&logoColor=white)](https://airflow.apache.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
 
-Data Engineering Portfolio — Real-time IoT sensor data collection, processing, and monitoring platform
+Data Engineering Portfolio  
+Real-time IoT sensor data collection, processing, and monitoring platform
 
 ## 📋 Project Overview
 
@@ -125,5 +126,5 @@ See each service directory’s README for API, run instructions, and schema.
 ---
 
 **Taehyeon Ryu | Data Engineer**  
-📎 [GitHub](https://github.com/codingnanyong/portfolio) · 📧 <codingnanyong@gmail.com>  
+📎 [GitHub](https://github.com/codingnanyong) · 📧 <codingnanyong@gmail.com>  
 *Last Updated: February 2026*
