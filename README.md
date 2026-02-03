@@ -1,5 +1,12 @@
 # 🏭 IoT Sensor Monitoring Data Platform
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue?logo=python&logoColor=white)](https://www.python.org/)
+[![Docker](https://img.shields.io/badge/Docker-supported-2496ED?logo=docker&logoColor=white)](https://www.docker.com/)
+[![Kubernetes](https://img.shields.io/badge/Kubernetes-Kind-326CE5?logo=kubernetes&logoColor=white)](https://kubernetes.io/)
+[![Apache Airflow](https://img.shields.io/badge/Apache%20Airflow-2.10.3-017CEE?logo=apache-airflow&logoColor=white)](https://airflow.apache.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+
 Data Engineering Portfolio — Real-time IoT sensor data collection, processing, and monitoring platform
 
 ## 📋 Project Overview
