@@ -51,22 +51,22 @@ uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 
 ```json
 {
-  "capture_dt": "2025-09-12T05:59:38.837000Z",
-  "ymd": "20250912",
-  "hh": "14",
+  "capture_dt": "<timestamp>",
+  "ymd": "<YYYYMMDD>",
+  "hh": "<HH>",
   "measurements": [
     {
       "location": {
-        "factory": "SinPyeong",
-        "building": "MX-1",
+        "factory": "Factory-A",
+        "building": "Bld-1",
         "floor": 1,
-        "loc_id": "A011",
-        "area": "Storage"
+        "loc_id": "LOC001",
+        "area": "Area-1"
       },
       "metrics": {
-        "temperature": { "value": "22.1", "status": "normal" },
-        "humidity": { "value": "77.7", "status": null },
-        "pcv_temperature": { "value": "23.8", "status": "normal" }
+        "temperature": { "value": "<val>", "status": "normal" },
+        "humidity": { "value": "<val>", "status": null },
+        "pcv_temperature": { "value": "<val>", "status": "normal" }
       }
     }
   ]
@@ -106,8 +106,8 @@ Checks use per-sensor-type thresholds; priority: critical > warning > normal; nu
 ## 🔧 Environment Variables
 
 - `DATABASE_URL` — PostgreSQL/TimescaleDB URL
-- `LOCATION_SERVICE_URL` — Location service (default: http://location-service:80)
-- `THRESHOLDS_SERVICE_URL` — Thresholds service (default: http://thresholds-service:80)
+- `LOCATION_SERVICE_URL` — Location service (default: [http://location-service:80])
+- `THRESHOLDS_SERVICE_URL` — Thresholds service (default: [http://thresholds-service:80])
 - `DEBUG`, `LOG_LEVEL`, `CORS_ORIGINS`
 
 ## 📈 Monitoring
@@ -132,3 +132,7 @@ pytest --cov=app
 **New external service:** Add client under `clients/`, add URL in config, use in realtime service.
 
 **New threshold level:** Add level in thresholds-service Level enum; update `_check_thresholds` mapping.
+
+---
+
+**Last Updated**: February 2026

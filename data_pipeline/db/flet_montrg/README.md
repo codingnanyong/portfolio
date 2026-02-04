@@ -1,12 +1,12 @@
-# Flet Monitoring Application Database Schema
+# 🗄️ Flet Monitoring Application Database Schema
 
 Database schema and configuration files for the Flet-based monitoring application, part of the Airflow data pipeline infrastructure.
 
-## Overview
+## 📋 Overview
 
 This directory contains the database schema definitions for a Python-based monitoring application built with Flet framework. The application provides real-time data monitoring and alerting capabilities for temperature sensors and other IoT devices.
 
-## Features
+## ✨ Features
 
 - Real-time data monitoring and collection
 - Temperature sensor data management
@@ -15,9 +15,9 @@ This directory contains the database schema definitions for a Python-based monit
 - Database integration for data persistence
 - Integration with Airflow data pipeline
 
-## Project Structure
+## 📁 Project Structure
 
-``` text
+```text
 flet_montrg/
 ├── schema/                     # Database schema files
 │   ├── alert_subscriptions.sql # Alert subscription management
@@ -30,7 +30,7 @@ flet_montrg/
 └── README.md                   # This file
 ```
 
-## Database Schema
+## 🗃️ Database Schema
 
 The application uses a relational database with the following main entities:
 
@@ -46,7 +46,7 @@ The application uses a relational database with the following main entities:
 - **thresholds**: Customizable alert thresholds
 - **alert_subscriptions**: User notification preferences
 
-## Database Setup
+## ⚙️ Database Setup
 
 1. **Schema Creation**: Execute the SQL files in the `sql/` directory in the following order:
 

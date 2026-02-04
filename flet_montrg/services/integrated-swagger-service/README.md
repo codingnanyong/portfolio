@@ -1,4 +1,4 @@
-# API Dashboard Service (Integrated Swagger)
+# 📊 API Dashboard Service (Integrated Swagger)
 
 Centralized API monitoring dashboard. Monitors and visualizes the status of all microservices running in the Kubernetes cluster.
 
@@ -46,9 +46,9 @@ api-dashboard-service/
 └── README.md
 ```
 
-## 🛠️ Install & Run
+## ⚙️ Install & Run
 
-### Local
+### 🖥️ Local
 
 ```bash
 pip install -r requirements.txt
@@ -56,14 +56,14 @@ cp env.example .env
 uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
-### Docker
+### 🐳 Docker
 
 ```bash
 docker build -t api-dashboard-service .
 docker run -p 8000:8000 -p 8080:8080 api-dashboard-service
 ```
 
-### Kubernetes
+### ☸️ Kubernetes
 
 ```bash
 kubectl apply -f ../k8s/api-dashboard/
@@ -76,20 +76,20 @@ kubectl apply -f ../k8s/api-dashboard/
 - **Health**: [http://localhost:8000/health]
 - **Metrics**: [http://localhost:8000/metrics]
 
-## 📊 API Endpoints
+## 🔌 API Endpoints
 
-### Dashboard
+### 📊 Dashboard
 
 - `GET /api/v1/dashboard/services` — All service status
 - `GET /api/v1/dashboard/overview` — Overview
 
-### Service monitoring
+### 🔍 Service monitoring
 
 - `GET /api/v1/services` — Monitored services list
 - `GET /api/v1/services/{service_name}/status` — Service status
 - `GET /api/v1/services/{service_name}/health` — Health check
 
-### Metrics
+### 📈 Metrics
 
 - `GET /api/v1/metrics/overview` — Overall metrics
 - `GET /api/v1/metrics/{service_name}` — Per-service metrics
@@ -98,7 +98,13 @@ kubectl apply -f ../k8s/api-dashboard/
 
 See `env.example`.
 
-## 📈 Monitoring
+## 🧪 Tests
+
+```bash
+pytest
+```
+
+## 📡 Monitoring
 
 1. Service status (online/offline)
 2. API endpoint status per service
@@ -113,3 +119,7 @@ See `env.example`.
 - [ ] Custom dashboard layout
 - [ ] Per-service SLA monitoring
 - [ ] Integrated log viewer
+
+---
+
+**Last Updated**: February 2026

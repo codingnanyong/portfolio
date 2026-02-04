@@ -1,8 +1,8 @@
-# Alert Notification Service
+# 📧 Alert Notification Service
 
 Notification delivery and delivery history API
 
-## Features
+## ✨ Features
 
 - Notification delivery history
 - Status: PENDING, SENT, FAILED, RETRYING
@@ -10,7 +10,7 @@ Notification delivery and delivery history API
 - Query by alert or subscription
 - Pending/failed notification lists
 
-## API Endpoints
+## 🔌 API Endpoints
 
 ### Notifications
 
@@ -33,11 +33,11 @@ Notification delivery and delivery history API
 - `GET /api/v1/notifications/pending` — Pending
 - `GET /api/v1/notifications/failed` — Failed
 
-## Environment Variables
+## 🔧 Environment Variables
 
 See `.env` or copy from `env.example`.
 
-## Run
+## ⚙️ Install & Run
 
 ```bash
 # Local
@@ -48,8 +48,12 @@ docker build -t alert-notification-service .
 docker run -p 8000:8000 alert-notification-service
 ```
 
-## Tests
+## 🧪 Tests
 
 ```bash
 pytest
 ```
+
+---
+
+**Last Updated**: February 2026

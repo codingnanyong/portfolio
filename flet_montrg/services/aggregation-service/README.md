@@ -1,14 +1,14 @@
-# Aggregation Service
+# 📊 Aggregation Service
 
 Perceived-temperature aggregation and statistics API
 
-## Features
+## ✨ Features
 
 - Hourly perceived-temperature aggregation
 - Query by location and factory
 - Structured JSON responses
 
-## API Endpoints
+## 🔌 API Endpoints
 
 ### Perceived-temperature aggregation
 
@@ -33,26 +33,26 @@ Perceived-temperature aggregation and statistics API
 - `GET /ready` — Readiness check
 - `GET /docs` — Swagger UI
 
-## Request/Response
+## 📝 Request/Response
 
 ### Example requests
 
 **By location:**
 
 ```http
-GET /api/v1/aggregation/pcv_temperature/location/A031?start_date=20240922&end_date=20240922
+GET /api/v1/aggregation/pcv_temperature/location/<loc_id>?start_date=<yyyyMMdd>&end_date=<yyyyMMdd>
 ```
 
 **By factory:**
 
 ```http
-GET /api/v1/aggregation/pcv_temperature/factory/SinPyeong?start_date=20240922&end_date=20240922
+GET /api/v1/aggregation/pcv_temperature/factory/<factory>?start_date=<yyyyMMdd>&end_date=<yyyyMMdd>
 ```
 
 **All:**
 
 ```http
-GET /api/v1/aggregation/pcv_temperature/?start_date=20240922&end_date=20240922
+GET /api/v1/aggregation/pcv_temperature/?start_date=<yyyyMMdd>&end_date=<yyyyMMdd>
 ```
 
 ### Example response
@@ -60,18 +60,18 @@ GET /api/v1/aggregation/pcv_temperature/?start_date=20240922&end_date=20240922
 ```json
 {
   "location": {
-    "factory": "SinPyeong",
-    "building": "F-2001",
+    "factory": "Factory-A",
+    "building": "Bld-1",
     "floor": 1,
-    "loc_id": "A031",
-    "area": "Assembly 2",
+    "loc_id": "LOC001",
+    "area": "Area-1",
     "date": [
       {
-        "ymd": "20240922",
-        "hour": "12",
+        "ymd": "<YYYYMMDD>",
+        "hour": "<HH>",
         "metrics": {
-          "pcv_temperature_max": "27.00",
-          "pcv_temperature_avg": "27.00"
+          "pcv_temperature_max": "<val>",
+          "pcv_temperature_avg": "<val>"
         }
       }
     ]
@@ -79,7 +79,7 @@ GET /api/v1/aggregation/pcv_temperature/?start_date=20240922&end_date=20240922
 }
 ```
 
-## Environment Variables
+## 🔧 Environment Variables
 
 - `APP_NAME`: Application name (default: Aggregation Service)
 - `APP_VERSION`: Version (default: 1.0.0)
@@ -91,7 +91,7 @@ GET /api/v1/aggregation/pcv_temperature/?start_date=20240922&end_date=20240922
 - `CORS_ORIGINS`: CORS origins
 - `LOG_LEVEL`: Log level (default: INFO)
 
-## Run
+## ⚙️ Install & Run
 
 ### Local
 
@@ -104,22 +104,26 @@ uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ### Docker
 
 ```bash
-docker build -t flet-montrg/aggregation-service:latest .
-docker run -p 8000:8000 flet-montrg/aggregation-service:latest
+docker build -t aggregation-service:latest .
+docker run -p 8000:8000 aggregation-service:latest
 ```
 
-### Tests
+### 🧪 Tests
 
 ```bash
 ./test.sh
 ./test.sh --format --lint
 ```
 
-## Database
+## 🗄️ Database
 
 Uses:
 
-- `flet_montrg.temperature` — Temperature data
-- `flet_montrg.locations` — Location info
-- `flet_montrg.aggregations` — Aggregation results
-- `flet_montrg.aggregation_jobs` — Aggregation job metadata
+- `<schema>.temperature` — Temperature data
+- `<schema>.locations` — Location info
+- `<schema>.aggregations` — Aggregation results
+- `<schema>.aggregation_jobs` — Aggregation job metadata
+
+---
+
+**Last Updated**: February 2026

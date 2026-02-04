@@ -1,3 +1,0 @@
-"""
-Realtime Service Application Package
-"""

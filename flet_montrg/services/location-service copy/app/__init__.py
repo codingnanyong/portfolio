@@ -1,3 +1,0 @@
-"""
-Location Service Application Package
-"""

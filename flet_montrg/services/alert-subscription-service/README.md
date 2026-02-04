@@ -1,8 +1,8 @@
-# Alert Subscription Service
+# 📋 Alert Subscription Service
 
 Alert subscription management API
 
-## Features
+## ✨ Features
 
 - Create and query subscriptions
 - Per-subscriber subscription management
@@ -10,7 +10,7 @@ Alert subscription management API
 - Filter by sensor and threshold type
 - Enable/disable subscriptions
 
-## API Endpoints
+## 🔌 API Endpoints
 
 ### Subscriptions
 
@@ -30,7 +30,7 @@ Alert subscription management API
 - `GET /ready` — Readiness check
 - `GET /docs` — Swagger UI
 
-## Data Model
+## 📊 Data Model
 
 ### Subscription fields
 
@@ -40,14 +40,16 @@ Alert subscription management API
 - `subscriber`, `notify_type` (email, kakao, sms, app), `notify_id`
 - `enabled`, `upd_dt`
 
-## Environment Variables
+## 🔧 Environment Variables
 
 - `APP_NAME`: Application name (default: Alert Subscription Service)
 - `APP_VERSION`: Version (default: 1.0.0)
 - `DATABASE_URL`: Database URL
 - `LOCATION_SERVICE_URL`: Location service URL
 
-## Local run
+## ⚙️ Install & Run
+
+### Local
 
 ```bash
 pip install -r requirements.txt
@@ -55,9 +57,13 @@ cp env.example .env
 uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
-## Docker
+### Docker
 
 ```bash
-docker build -t flet-montrg/alert-subscription-service:latest .
-docker run -p 8000:8000 --env-file .env flet-montrg/alert-subscription-service:latest
+docker build -t alert-subscription-service:latest .
+docker run -p 8000:8000 --env-file .env alert-subscription-service:latest
 ```
+
+---
+
+**Last Updated**: February 2026

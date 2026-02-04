@@ -95,3 +95,7 @@ pytest tests/test_thresholds.py
 | DATABASE_URL | DB connection URL | - |
 | CORS_ORIGINS | CORS origins | * |
 | LOG_LEVEL | Log level | INFO |
+
+---
+
+**Last Updated**: February 2026

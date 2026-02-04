@@ -1,15 +1,15 @@
-# Alert Service
+# 🚨 Alert Service
 
 Alert creation and management API
 
-## Features
+## ✨ Features
 
 - Create and query alerts
 - Query by sensor or location
 - Alert state (e.g. resolved)
 - Threshold-breach alert records
 
-## API Endpoints
+## 🔌 API Endpoints
 
 ### Alerts
 
@@ -28,7 +28,7 @@ Alert creation and management API
 - `GET /ready` — Readiness check
 - `GET /docs` — Swagger UI
 
-## Environment Variables
+## 🔧 Environment Variables
 
 - `APP_NAME`: Application name (default: Alert Service)
 - `APP_VERSION`: Version (default: 1.0.0)
@@ -37,7 +37,9 @@ Alert creation and management API
 - `LOCATION_SERVICE_URL`: Location service URL
 - `SENSOR_THRESHOLD_MAPPING_SERVICE_URL`: Sensor Threshold Mapping service URL
 
-## Local run
+## ⚙️ Install & Run
+
+### Local
 
 ```bash
 pip install -r requirements.txt
@@ -45,9 +47,13 @@ cp env.example .env
 uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
-## Docker
+### Docker
 
 ```bash
-docker build -t flet-montrg/alert-service:latest .
-docker run -p 8000:8000 --env-file .env flet-montrg/alert-service:latest
+docker build -t alert-service:latest .
+docker run -p 8000:8000 --env-file .env alert-service:latest
 ```
+
+---
+
+**Last Updated**: February 2026

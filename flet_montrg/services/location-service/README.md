@@ -56,8 +56,8 @@ GET /api/v1/locations/
 
 ```json
 [
-  { "loc_id": "A031", "factory": "SinPyeong", "building": "F-2001", "floor": 1, "area": "Assembly 2" },
-  { "loc_id": "A011", "factory": "SinPyeong", "building": "MX-1", "floor": 1, "area": "Storage" }
+  { "loc_id": "LOC001", "factory": "Factory-A", "building": "Bld-1", "floor": 1, "area": "Area-1" },
+  { "loc_id": "LOC002", "factory": "Factory-A", "building": "Bld-2", "floor": 1, "area": "Area-2" }
 ]
 ```
 
@@ -67,17 +67,17 @@ GET /api/v1/locations/
 GET /api/v1/locations/{loc_id}
 ```
 
-- **Parameters**: `loc_id` (string, required), e.g. "A031"
+- **Parameters**: `loc_id` (string, required), e.g. `"LOC001"`
 
 **Example response:**
 
 ```json
 {
-  "loc_id": "A031",
-  "factory": "SinPyeong",
-  "building": "F-2001",
+  "loc_id": "LOC001",
+  "factory": "Factory-A",
+  "building": "Bld-1",
   "floor": 1,
-  "area": "Assembly 2"
+  "area": "Area-1"
 }
 ```
 
@@ -87,7 +87,7 @@ GET /api/v1/locations/{loc_id}
 GET /api/v1/locations/factory/{factory}
 ```
 
-- **Parameters**: `factory` (string, required), e.g. "SinPyeong"
+- **Parameters**: `factory` (string, required), e.g. `"Factory-A"`
 
 #### By building
 
@@ -95,7 +95,7 @@ GET /api/v1/locations/factory/{factory}
 GET /api/v1/locations/building/{building}
 ```
 
-- **Parameters**: `building` (string, required), e.g. "F-2001"
+- **Parameters**: `building` (string, required), e.g. `"Bld-1"`
 
 #### By floor
 
@@ -103,7 +103,7 @@ GET /api/v1/locations/building/{building}
 GET /api/v1/locations/floor/{floor}
 ```
 
-- **Parameters**: `floor` (integer, required), e.g. 1
+- **Parameters**: `floor` (integer, required), e.g. `1`
 
 #### Multi-filter
 
@@ -154,7 +154,7 @@ DEBUG=false
 ENVIRONMENT=production
 HOST=0.0.0.0
 PORT=8000
-DATABASE_URL=postgresql+asyncpg://user:password@localhost:5432/monitoring
+DATABASE_URL=postgresql+asyncpg://<user>:<password>@<host>:<port>/<db>
 CORS_ORIGINS=["*"]
 LOG_LEVEL=INFO
 ```
@@ -203,13 +203,13 @@ readinessProbe:
 ## 🚀 Deployment (Kubernetes)
 
 ```bash
-docker build -t flet-montrg/location-service:latest .
-kind load docker-image flet-montrg/location-service:latest --name flet-cluster
-kubectl apply -f ../../k8s/location/
-kubectl get pods -n flet-montrg -l app=location-service
+docker build -t location-service:latest .
+kind load docker-image location-service:latest --name <cluster-name>
+kubectl apply -f k8s/
+kubectl get pods -n <namespace> -l app=location-service
 
 # Access
-kubectl port-forward -n flet-montrg service/location-service 30002:80
+kubectl port-forward -n <namespace> svc/location-service 30002:80
 open http://localhost:30002/docs
 ```
 
@@ -224,7 +224,7 @@ open http://localhost:30002/docs
 
 **DB connection failed**: Check `DATABASE_URL`, DB server, network. Test with `psql` or `docker logs location-service`.
 
-**Empty locations**: Verify data in DB, e.g. `SELECT * FROM flet_montrg.location LIMIT 10`; insert sample rows if needed.
+**Empty locations**: Verify data in DB, e.g. `SELECT * FROM <schema>.<table> LIMIT 10`; insert sample rows if needed.
 
 ## 📚 References
 

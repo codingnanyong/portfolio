@@ -1,15 +1,15 @@
-# Sensor Threshold Mapping Service
+# 🔗 Sensor Threshold Mapping Service
 
 Sensor–threshold mapping management API
 
-## Features
+## ✨ Features
 
 - Create and query sensor–threshold mappings
 - Filter by sensor or threshold
 - Enable/disable mappings
 - Validity window (effective_from, effective_to)
 
-## API Endpoints
+## 🔌 API Endpoints
 
 ### Mappings
 
@@ -30,7 +30,7 @@ Sensor–threshold mapping management API
 - `GET /ready` — Readiness check
 - `GET /docs` — Swagger UI
 
-## Data Model
+## 📊 Data Model
 
 ### Mapping fields
 
@@ -40,7 +40,7 @@ Sensor–threshold mapping management API
 - `enabled`: Default true
 - `effective_from`, `effective_to`, `upd_dt`
 
-## Environment Variables
+## 🔧 Environment Variables
 
 - `APP_NAME`: Application name (default: Sensor Threshold Mapping Service)
 - `APP_VERSION`: Version (default: 1.0.0)
@@ -48,7 +48,7 @@ Sensor–threshold mapping management API
 - `THRESHOLDS_SERVICE_URL`: Thresholds service URL
 - `LOCATION_SERVICE_URL`: Location service URL
 
-## Local run
+## ⚙️ Install & Run
 
 ```bash
 pip install -r requirements.txt
@@ -56,7 +56,7 @@ cp env.example .env
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-## Tests
+## 🧪 Tests
 
 ```bash
 ./tests/test.sh
@@ -64,14 +64,18 @@ uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 pytest tests/ -v
 ```
 
-## Kubernetes
+## 🚀 Deployment (Kubernetes)
 
 ```bash
 cd k8s/sensor-threshold-mapping
 ./deploy.sh
 ```
 
-## Ports
+## 🔌 Ports
 
 - HTTP: 30011
 - Metrics: 30240
+
+---
+
+**Last Updated**: February 2026

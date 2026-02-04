@@ -94,7 +94,7 @@ data_pipeline/
         humidity,
         pcv_temperature,
         capture_dt
-    FROM flet_montrg.temperature_raw
+    FROM <schema>.temperature_raw
     WHERE capture_dt >= :start_time
       AND capture_dt < :end_time
     ```
@@ -205,12 +205,12 @@ from plugins.hooks.postgres_hook import PostgresHelper
 pg_helper = PostgresHelper(conn_id='pg_fdw_v1_iot')
 
 result = pg_helper.execute_query(
-    sql="SELECT * FROM flet_montrg.temperature_raw LIMIT 10",
+    sql="SELECT * FROM <schema>.temperature_raw LIMIT 10",
     **context
 )
 
 pg_helper.execute_upsert(
-    table='flet_montrg.temperature',
+    table='<schema>.temperature',
     data=aggregated_data,
     conflict_columns=['loc_id', 'ymd', 'hh'],
     **context

@@ -1,3 +1,0 @@
-"""
-Thresholds Service Application Package
-"""
