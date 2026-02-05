@@ -114,7 +114,7 @@ See each service directory’s README for API, run instructions, and schema.
 | Data Pipeline | [data_pipeline/README.md](./data_pipeline/README.md) |
 | DB Schema | [data_pipeline/db/flet_montrg/README.md](./data_pipeline/db/flet_montrg/README.md) |
 | Thresholds Service | [flet_montrg/services/thresholds-service/README.md](./flet_montrg/services/thresholds-service/README.md) |
-| Location Service | [flet_montrg/services/location-service/](./flet_montrg/services/location-service/) |
+| Location Service | [flet_montrg/services/location-service/](./flet_montrg/services/location-service/README.md) |
 | Realtime Service | [flet_montrg/services/realtime-service/README.md](./flet_montrg/services/realtime-service/README.md) |
 | Aggregation Service | [flet_montrg/services/aggregation-service/README.md](./flet_montrg/services/aggregation-service/README.md) |
 | Alert Service | [flet_montrg/services/alert-service/README.md](./flet_montrg/services/alert-service/README.md) |
