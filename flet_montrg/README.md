@@ -1,6 +1,6 @@
-# 📊 flet-montrg Microservices
+# 📊 flet-montrg MicroServices
 
-Microservice APIs for perceived-temperature monitoring and alerting via IoT sensors
+MicroService APIs for perceived-temperature monitoring and alerting via IoT sensors
 
 ## 📋 Overview
 
