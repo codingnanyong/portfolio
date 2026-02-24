@@ -20,7 +20,7 @@ class Settings(BaseSettings):
     port: int = 8000
     
     # Database settings
-    database_url: str = os.getenv("DATABASE_URL", "postgresql+asyncpg://postgres:postgres@localhost:5432/hq")
+    database_url: str = os.getenv("DATABASE_URL", "postgresql+asyncpg://postgres:postgres@203.228.107.184:5432/hq")
     
     # CORS settings
     cors_origins: List[str] = ["*"]

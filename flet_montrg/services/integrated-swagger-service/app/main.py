@@ -8,8 +8,7 @@ from typing import Dict, Any
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse, FileResponse, Response
-from fastapi.staticfiles import StaticFiles
+from fastapi.responses import JSONResponse, Response
 import uvicorn
 import httpx
 
@@ -44,7 +43,7 @@ async def lifespan(app: FastAPI):
         await swagger_collector.create_integrated_spec()
         logger.info("Swagger collector initialized and integrated spec created")
         
-        logger.info(f"Integrated Swagger UI available at port {settings.port}/swagger")
+        logger.info(f"Integrated Swagger API (proxy) available at port {settings.port}")
         
         yield
         
@@ -79,8 +78,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# 정적 파일 서빙
-app.mount("/static", StaticFiles(directory="app/static"), name="static")
+# 웹 UI는 web-service(Svelte)에서 제공. 본 서비스는 프록시/API 전용.
 
 
 # 헬스체크 엔드포인트
@@ -99,21 +97,13 @@ async def root():
     service_count = len(integrated_spec.services) if integrated_spec else 0
     
     return {
-        "service": "API Dashboard Service",
+        "service": "Integrated Swagger API (proxy only)",
         "version": settings.version,
         "status": "running",
-        "swagger_ui_url": "/swagger",
         "integrated_api_docs": "/openapi.json",
-        "docs_url": "/docs",
-        "integrated_services_count": service_count
+        "integrated_services_count": service_count,
+        "web_ui": "Use web-service (port 30012) for Swagger UI"
     }
-
-
-# 통합 Swagger UI 엔드포인트
-@app.get("/swagger")
-async def swagger_ui():
-    """통합 Swagger UI 페이지"""
-    return FileResponse("app/static/swagger-ui.html")
 
 
 # 통합 OpenAPI 스펙 엔드포인트 (FastAPI 기본 스펙 오버라이드)
@@ -168,21 +158,6 @@ async def get_integrated_openapi_spec():
             "paths": {},
             "servers": [{"url": f"http://localhost:{settings.port}"}]
         }
-
-
-# FastAPI 기본 docs 엔드포인트 (통합 스펙 사용)
-@app.get("/docs", include_in_schema=False)
-async def docs_redirect():
-    """FastAPI 기본 docs를 Swagger UI로 리다이렉트"""
-    from fastapi.responses import RedirectResponse
-    return RedirectResponse(url="/swagger", status_code=302)
-
-# 대시보드 호환성을 위한 리다이렉트
-@app.get("/dashboard", include_in_schema=False)
-async def dashboard_redirect():
-    """기존 대시보드 URL을 Swagger UI로 리다이렉트"""
-    from fastapi.responses import RedirectResponse
-    return RedirectResponse(url="/swagger", status_code=302)
 
 
 # Swagger/OpenAPI 관련 API

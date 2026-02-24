@@ -6,6 +6,8 @@ set -e
 
 NAMESPACE="flet-montrg"
 SERVICE_NAME="realtime-service"
+IMAGE_NAME="flet-montrg/realtime-service:latest"
+KIND_CLUSTER="flet-cluster"
 
 echo "🚀 realtime-service 배포 시작..."
 
@@ -20,9 +22,17 @@ if [ "$1" == "--clean" ]; then
     sleep 5
 fi
 
+# Docker 이미지 빌드 (선택사항 - 이미 빌드되어 있으면 스킵)
+if [ "$1" != "--no-build" ] && [ "$2" != "--no-build" ]; then
+    echo "🔨 Docker 이미지 빌드..."
+    cd ../../services/realtime-service
+    docker build -t $IMAGE_NAME .
+    cd ../../k8s/realtime
+fi
+
 # Kind에 이미지 로드
 echo "📦 Kind에 이미지 로드..."
-kind load docker-image flet-montrg/realtime-service:latest --name flet-cluster
+kind load docker-image $IMAGE_NAME --name $KIND_CLUSTER
 
 # ConfigMap과 Secret 배포
 echo "⚙️ ConfigMap 및 Secret 배포..."
@@ -35,7 +45,7 @@ kubectl apply -k .
 
 # 배포 상태 확인
 echo "🔍 배포 상태 확인..."
-kubectl rollout status deployment/$SERVICE_NAME -n $NAMESPACE
+kubectl rollout status deployment/$SERVICE_NAME -n $NAMESPACE --timeout=300s || true
 
 # 서비스 상태 확인
 echo "🌐 서비스 상태 확인..."
@@ -50,6 +60,10 @@ if [ "$1" == "--logs" ]; then
     echo "📝 로그 확인..."
     kubectl logs -l app=$SERVICE_NAME -n $NAMESPACE --tail=50
 fi
+
+# 사용하지 않는 Docker 이미지 정리
+echo "🧹 사용하지 않는 Docker 이미지 정리..."
+docker image prune -f
 
 echo "✅ realtime-service 배포 완료!"
 echo "🌐 서비스 접속: http://localhost:30003"

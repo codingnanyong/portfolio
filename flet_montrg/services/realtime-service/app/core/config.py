@@ -20,11 +20,11 @@ class Settings(BaseSettings):
     port: int = 8000
     
     # Database settings
-    database_url: str = os.getenv("DATABASE_URL", "postgresql+asyncpg://user:password@localhost:5432/schema")
+    database_url: str = os.getenv("DATABASE_URL", "postgresql+asyncpg://postgres:dwgood@203.228.101.190:5432/iot")
     
     # External service URLs
-    location_service_url: str = os.getenv("LOCATION_SERVICE_URL", "http://location-service:80")
-    thresholds_service_url: str = os.getenv("THRESHOLDS_SERVICE_URL", "http://thresholds-service:80")
+    location_service_url: str = os.getenv("LOCATION_SERVICE_URL", "http://203.228.107.184:30002")
+    thresholds_service_url: str = os.getenv("THRESHOLDS_SERVICE_URL", "http://203.228.107.184:30001")
     
     # CORS settings
     cors_origins: List[str] = ["*"]

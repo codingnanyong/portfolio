@@ -1,8 +1,16 @@
-# 🚀 Thresholds Service
+# 📊 Thresholds Service
 
-Perceived-temperature threshold management API
+API for managing apparent temperature (and related) thresholds — CRUD, levels (e.g. green / yellow / orange), and type-based lookup.
 
-## 📁 Project Structure
+## ✨ Features
+
+- 📝 Threshold CRUD
+- 🔍 Query by type (e.g. pcv_temperature)
+- ✅ Validation and error handling
+- 💓 Health check and structured logging
+- 🐳 Docker and Kubernetes–ready
+
+## 📁 Project structure
 
 ```text
 thresholds-service/
@@ -13,17 +21,17 @@ thresholds-service/
 │   │   └── v1/
 │   │       ├── api.py          # API v1 router
 │   │       └── endpoints/
-│   │           └── thresholds.py
+│   │           └── thresholds.py # Threshold endpoints
 │   ├── core/
 │   │   ├── config.py
 │   │   ├── database.py
 │   │   ├── exceptions.py
 │   │   └── logging.py
 │   ├── models/
-│   │   ├── database_models.py
-│   │   └── schemas.py
+│   │   ├── database_models.py  # SQLAlchemy models
+│   │   └── schemas.py          # Pydantic schemas
 │   └── services/
-│       └── threshold_service.py
+│       └── threshold_service.py # Business logic
 ├── tests/
 │   └── conftest.py
 ├── requirements.txt
@@ -32,70 +40,66 @@ thresholds-service/
 └── README.md
 ```
 
-## ⚙️ Install & Run
+## 🚀 Run
 
-### 1. Dependencies
+### Local
 
 ```bash
 pip install -r requirements.txt
-```
-
-### 2. Environment
-
-```bash
 cp env.example .env
 # Edit .env as needed
-```
 
-### 3. Run
-
-```bash
-python -m app.main
-# or
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-### 4. Docker
+### Docker
 
 ```bash
 docker build -t thresholds-service .
-docker run -p 8000:8000 thresholds-service
+docker run -p 8000:8000 --env-file .env thresholds-service
 ```
 
-## 📘 API Docs
+### K8s (Kind)
 
-- Swagger UI: [http://localhost:8000/docs]
-- ReDoc: [http://localhost:8000/redoc]
+- **NodePort**: `30002` (see project [README](../../README.md) for port layout)
+
+## 🔌 API docs
+
+- Swagger UI: <http://localhost:8000/docs>
+- ReDoc: <http://localhost:8000/redoc>
+- `GET /` — service info | `GET /health` — health | `GET /ready` — readiness
 
 ## 🧪 Tests
 
 ```bash
 pytest
 pytest --cov=app
-pytest tests/test_thresholds.py
+pytest tests/
 ```
 
-## ✨ Features
+## ⚙️ Environment variables
 
-- Threshold CRUD
-- Query by type
-- Validation, logging, exception handling
-- Health-check endpoint
+- `APP_NAME` — Application name (default: Thresholds Service)
+- `APP_VERSION` — Version (default: 1.0.0)
+- `DEBUG` — Debug mode (default: false)
+- `ENVIRONMENT` — development / production (default: development)
+- `HOST` — Server host (default: 0.0.0.0)
+- `PORT` — Server port (default: 8000)
+- `DATABASE_URL` — Database URL
+- `CORS_ORIGINS` — CORS origins (default: *)
+- `LOG_LEVEL` — Log level (default: INFO)
 
-## 🔧 Environment Variables
+## 🐛 Troubleshooting
 
-| Variable | Description | Default |
-| ------------ | ----------------------------- | ------------------ |
-| APP_NAME | Application name | Thresholds Service |
-| APP_VERSION | Version | 1.0.0 |
-| DEBUG | Debug mode | false |
-| ENVIRONMENT | development/production | development |
-| HOST | Server host | 0.0.0.0 |
-| PORT | Server port | 8000 |
-| DATABASE_URL | DB connection URL | - |
-| CORS_ORIGINS | CORS origins | * |
-| LOG_LEVEL | Log level | INFO |
+- DB connection failed: Check `DATABASE_URL`, DB server, network.
+- Empty thresholds: Verify data in thresholds table; insert default levels if needed.
 
----
+## 📚 References
 
-**Last Updated**: February 2026
+- [FastAPI](https://fastapi.tiangolo.com/)
+- [SQLAlchemy](https://docs.sqlalchemy.org/)
+- [Pydantic](https://docs.pydantic.dev/)
+- [Pytest](https://docs.pytest.org/)
+
+Last updated: February 2026
+
