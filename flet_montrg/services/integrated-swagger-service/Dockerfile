@@ -25,5 +25,5 @@ ENV ENVIRONMENT=production
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:8000/health || exit 1
 
-# 애플리케이션 실행 (간소화된 메인 사용)
-CMD ["uvicorn", "app.main_simple:app", "--host", "0.0.0.0", "--port", "8000"]
+# 애플리케이션 실행 (프록시/API 전용, 웹 UI는 web-service에서 제공)
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

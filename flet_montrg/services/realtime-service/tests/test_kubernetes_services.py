@@ -5,18 +5,23 @@ Kubernetes 환경에서 실제 서비스 연결 테스트
 import asyncio
 import sys
 import os
+from pathlib import Path
 
-# 프로젝트 루트를 Python 경로에 추가
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+# 서비스 루트 디렉토리를 Python 경로에 추가
+service_root = Path(__file__).parent.parent
+if str(service_root) not in sys.path:
+    sys.path.insert(0, str(service_root))
 
 from app.core.logging import setup_logging, get_logger
 from app.clients.location_client import LocationClient
 from app.clients.thresholds_client import ThresholdsClient
+import pytest
 
 # 로깅 설정
 setup_logging()
 logger = get_logger(__name__)
 
+@pytest.mark.asyncio
 async def test_kubernetes_services():
     """Kubernetes 환경에서 서비스 연결 테스트"""
     print("=" * 60)

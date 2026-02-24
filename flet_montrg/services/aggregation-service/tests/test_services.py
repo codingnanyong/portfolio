@@ -7,7 +7,7 @@ from datetime import datetime
 from decimal import Decimal
 
 from app.services.aggregation_service import AggregationService
-from app.models.schemas import AggregationRequest, TemperatureAggregationResponse, LocationData, HourlyData, AggregationResponse
+from app.models.schemas import AggregationRequest, TemperatureAggregationResponse, LocationData, HourlyData
 
 
 class TestAggregationService:
@@ -209,31 +209,25 @@ class TestAggregationService:
         level = aggregation_service._determine_aggregation_level(mock_request)
         assert level == "location"
     
+    @pytest.mark.skip(reason="Method _extract_location_info removed from service")
     def test_extract_location_info_factory(self, aggregation_service, mock_db_rows):
         """Test location info extraction for factory level"""
-        location_info = aggregation_service._extract_location_info(mock_db_rows, "factory")
-        assert location_info == {"factory": "SinPyeong"}
+        pass
     
+    @pytest.mark.skip(reason="Method _extract_location_info removed from service")
     def test_extract_location_info_building(self, aggregation_service, mock_db_rows):
         """Test location info extraction for building level"""
-        location_info = aggregation_service._extract_location_info(mock_db_rows, "building")
-        assert location_info == {"factory": "SinPyeong", "building": "F-2001"}
+        pass
     
+    @pytest.mark.skip(reason="Method _extract_location_info removed from service")
     def test_extract_location_info_floor(self, aggregation_service, mock_db_rows):
         """Test location info extraction for floor level"""
-        location_info = aggregation_service._extract_location_info(mock_db_rows, "floor")
-        assert location_info == {"factory": "SinPyeong", "building": "F-2001", "floor": 1}
+        pass
     
+    @pytest.mark.skip(reason="Method _extract_location_info removed from service")
     def test_extract_location_info_location(self, aggregation_service, mock_db_rows):
         """Test location info extraction for location level"""
-        location_info = aggregation_service._extract_location_info(mock_db_rows, "location")
-        assert location_info == {
-            "factory": "SinPyeong",
-            "building": "F-2001", 
-            "floor": 1,
-            "loc_id": "A031",
-            "area": "조립2"
-        }
+        pass
 
     @pytest.mark.asyncio
     async def test_structure_temperature_data(self, aggregation_service, mock_db_rows):

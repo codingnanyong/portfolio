@@ -1,0 +1,8 @@
+# 웹 UI는 web-service에서 제공. static 미포함으로 이미지 축소
+app/static/
+app/main_simple.py
+__pycache__
+*.pyc
+.git
+.env
+*.md

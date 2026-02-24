@@ -5,9 +5,12 @@ Location과 Thresholds 클라이언트 테스트 스크립트
 import asyncio
 import sys
 import os
+from pathlib import Path
 
-# 프로젝트 루트를 Python 경로에 추가
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+# 서비스 루트 디렉토리를 Python 경로에 추가
+service_root = Path(__file__).parent.parent
+if str(service_root) not in sys.path:
+    sys.path.insert(0, str(service_root))
 
 from app.core.config import settings
 from app.core.logging import setup_logging, get_logger
@@ -18,6 +21,9 @@ from app.clients.thresholds_client import thresholds_client
 setup_logging()
 logger = get_logger(__name__)
 
+import pytest
+
+@pytest.mark.asyncio
 async def test_location_client():
     """Location 클라이언트 테스트"""
     print("=" * 50)
@@ -65,6 +71,7 @@ async def test_location_client():
         import traceback
         traceback.print_exc()
 
+@pytest.mark.asyncio
 async def test_thresholds_client():
     """Thresholds 클라이언트 테스트"""
     print("\n" + "=" * 50)
@@ -115,6 +122,7 @@ async def test_thresholds_client():
         import traceback
         traceback.print_exc()
 
+@pytest.mark.asyncio
 async def test_integration():
     """통합 테스트 - 실제 센서 데이터와 함께"""
     print("\n" + "=" * 50)

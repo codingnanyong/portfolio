@@ -5,14 +5,18 @@ Mock 데이터로 클라이언트 로직 테스트
 import asyncio
 import sys
 import os
+from pathlib import Path
 from decimal import Decimal
 
-# 프로젝트 루트를 Python 경로에 추가
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+# 서비스 루트 디렉토리를 Python 경로에 추가
+service_root = Path(__file__).parent.parent
+if str(service_root) not in sys.path:
+    sys.path.insert(0, str(service_root))
 
 from app.core.logging import setup_logging, get_logger
-from app.models.schemas import Location, Threshold, TemperatureCurrentData, LocationData, AreaData
+from app.models.schemas import Location, Threshold, TemperatureCurrentData, LocationInfo, MeasurementData, MetricsData, MetricData
 from app.services.temperature_service import TemperatureService
+import pytest
 
 # 로깅 설정
 setup_logging()
@@ -58,6 +62,7 @@ class MockThresholdsClient:
             ]
         return []
 
+@pytest.mark.asyncio
 async def test_threshold_logic():
     """임계치 검사 로직 테스트"""
     print("=" * 50)
@@ -99,6 +104,7 @@ async def test_threshold_logic():
             print(f"     Matched threshold: {matched_threshold.level} ({matched_threshold.min_value}~{matched_threshold.max_value})")
         print()
 
+@pytest.mark.asyncio
 async def test_data_structure():
     """데이터 구조 테스트"""
     print("=" * 50)
@@ -115,41 +121,50 @@ async def test_data_structure():
         sensor_id="SENSOR_001"
     )
     
-    # AreaData 생성
-    area_data = AreaData(
+    # LocationInfo 생성
+    location_info = LocationInfo(
         loc_id="LOC_001",
-        temperature=Decimal("25.5"),
-        humidity=Decimal("60.2"),
-        pcv_temperature=Decimal("28.3"),
-        status="warning"
-    )
-    
-    # LocationData 생성
-    location_data = LocationData(
         factory="테스트공장",
         building="테스트건물",
         floor=2,
-        area=area_data
+        area="테스트구역"
+    )
+    
+    # MetricsData 생성
+    metrics_data = MetricsData(
+        temperature=MetricData(value=Decimal("25.5"), status="normal"),
+        humidity=MetricData(value=Decimal("60.2"), status="normal"),
+        pcv_temperature=MetricData(value=Decimal("28.3"), status="warning")
+    )
+    
+    # MeasurementData 생성
+    measurement_data = MeasurementData(
+        location=location_info,
+        metrics=metrics_data
     )
     
     # TemperatureCurrentData 생성
     temp_data = TemperatureCurrentData(
-        capture_dt="2024-01-15T10:30:00",
         ymd="20240115",
         hh="10",
-        location=location_data
+        measurements=[measurement_data]
     )
     
     print("Generated data structure:")
-    print(f"  Sensor: {temp_data.location.area.loc_id}")
-    print(f"  Time: {temp_data.capture_dt}")
-    print(f"  Temperature: {temp_data.location.area.temperature}°C")
-    print(f"  Humidity: {temp_data.location.area.humidity}%")
-    print(f"  PCV Temperature: {temp_data.location.area.pcv_temperature}°C")
-    print(f"  Status: {temp_data.location.area.status}")
-    print(f"  Factory: {temp_data.location.factory}")
-    print(f"  Building: {temp_data.location.building}")
-    print(f"  Floor: {temp_data.location.floor}")
+    if temp_data.measurements:
+        measurement = temp_data.measurements[0]
+        print(f"  Location ID: {measurement.location.loc_id}")
+        print(f"  Time: {temp_data.ymd} {temp_data.hh}")
+        if measurement.metrics.temperature:
+            print(f"  Temperature: {measurement.metrics.temperature.value}°C")
+        if measurement.metrics.humidity:
+            print(f"  Humidity: {measurement.metrics.humidity.value}%")
+        if measurement.metrics.pcv_temperature:
+            print(f"  PCV Temperature: {measurement.metrics.pcv_temperature.value}°C")
+            print(f"  Status: {measurement.metrics.pcv_temperature.status}")
+        print(f"  Factory: {measurement.location.factory}")
+        print(f"  Building: {measurement.location.building}")
+        print(f"  Floor: {measurement.location.floor}")
     
     # JSON 변환 테스트
     print("\nJSON serialization test:")

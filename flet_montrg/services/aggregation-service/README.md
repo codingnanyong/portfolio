@@ -1,77 +1,77 @@
 # 📊 Aggregation Service
 
-Perceived-temperature aggregation and statistics API
+API service for apparent temperature (PCV) data aggregation and statistics.
 
 ## ✨ Features
 
-- Hourly perceived-temperature aggregation
-- Query by location and factory
-- Structured JSON responses
+- 📈 Hourly aggregation of apparent temperature data
+- 🏭 Query by location or factory
+- 📋 Structured JSON responses
 
 ## 🔌 API Endpoints
 
-### Perceived-temperature aggregation
+### Apparent temperature aggregation
 
-- `GET /api/v1/aggregation/pcv_temperature/` — All pcv_temperature (max, avg) aggregation
-- `GET /api/v1/aggregation/pcv_temperature/location/{location_id}` — By location
-- `GET /api/v1/aggregation/pcv_temperature/factory/{factory}` — By factory
+- `GET /api/v1/aggregation/pcv_temperature/` — aggregated data (max, avg) for all locations
+- `GET /api/v1/aggregation/pcv_temperature/location/{location_id}` — by location
+- `GET /api/v1/aggregation/pcv_temperature/factory/{factory}` — by factory
 
-**Parameters:**
+Query parameters:
 
-- `start_date`, `end_date`: Date range (supports yyyy, yyyyMM, yyyyMMdd)
+- `start_date`, `end_date`: date range (`yyyy`, `yyyyMM`, or `yyyyMMdd`)
 
-**Notes:**
+Notes:
 
-- Time range is 00:00–23:59 for the given dates
-- Metrics are pcv_temperature_max, pcv_temperature_avg
-- Dates can be yyyy, yyyyMM, or yyyyMMdd
+- Time range is set to 00:00–23:59 automatically
+- Metrics are fixed to `pcv_temperature_max` and `pcv_temperature_avg`
+- Date granularity can be year, month, or day (`yyyy`, `yyyyMM`, `yyyyMMdd`)
 
-### Basic endpoints
+### Common endpoints
 
-- `GET /` — Service info
-- `GET /health` — Health check
-- `GET /ready` — Readiness check
-- `GET /docs` — Swagger UI
+- `GET /` — service info
+- `GET /health` — health check
+- `GET /ready` — readiness check
+- `GET /docs` — API docs (Swagger UI)
 
-## 📝 Request/Response
+## 📝 Request / Response
 
-### Example requests
+### Request examples
 
-**By location:**
-
-```http
-GET /api/v1/aggregation/pcv_temperature/location/<loc_id>?start_date=<yyyyMMdd>&end_date=<yyyyMMdd>
-```
-
-**By factory:**
+By location:
 
 ```http
-GET /api/v1/aggregation/pcv_temperature/factory/<factory>?start_date=<yyyyMMdd>&end_date=<yyyyMMdd>
+GET /api/v1/aggregation/pcv_temperature/location/A031?start_date=20240922&end_date=20240922
 ```
 
-**All:**
+By factory:
 
 ```http
-GET /api/v1/aggregation/pcv_temperature/?start_date=<yyyyMMdd>&end_date=<yyyyMMdd>
+GET /api/v1/aggregation/pcv_temperature/factory/SinPyeong?start_date=20240922&end_date=20240922
 ```
 
-### Example response
+All locations:
+
+```http
+GET /api/v1/aggregation/pcv_temperature/?start_date=20240922&end_date=20240922
+```
+
+### Response example
 
 ```json
 {
   "location": {
-    "factory": "Factory-A",
-    "building": "Bld-1",
+    "factory": "SinPyeong",
+    "building": "F-2001",
     "floor": 1,
-    "loc_id": "LOC001",
-    "area": "Area-1",
+    "loc_id": "A031",
+    "area": "Assembly 2",
     "date": [
       {
-        "ymd": "<YYYYMMDD>",
-        "hour": "<HH>",
+        "ymd": "20240922",
+        "hour": "12",
         "metrics": {
-          "pcv_temperature_max": "<val>",
-          "pcv_temperature_avg": "<val>"
+          "pcv_temperature_max": "27.00",
+          "pcv_temperature_avg": "27.00"
         }
       }
     ]
@@ -79,51 +79,76 @@ GET /api/v1/aggregation/pcv_temperature/?start_date=<yyyyMMdd>&end_date=<yyyyMMd
 }
 ```
 
-## 🔧 Environment Variables
+## ⚙️ Environment variables
 
-- `APP_NAME`: Application name (default: Aggregation Service)
-- `APP_VERSION`: Version (default: 1.0.0)
-- `DEBUG`: Debug mode (default: true)
-- `ENVIRONMENT`: development/production
-- `HOST`: Server host (default: 0.0.0.0)
-- `PORT`: Server port (default: 8000)
-- `DATABASE_URL`: PostgreSQL connection string
-- `CORS_ORIGINS`: CORS origins
-- `LOG_LEVEL`: Log level (default: INFO)
+- `APP_NAME` — Application name (default: Aggregation Service)
+- `APP_VERSION` — Application version (default: 1.0.0)
+- `DEBUG` — Debug mode (default: true)
+- `ENVIRONMENT` — Environment: `development` or `production`
+- `HOST` — Server host (default: 0.0.0.0)
+- `PORT` — Server port (default: 8000)
+- `DATABASE_URL` — PostgreSQL connection string
+- `CORS_ORIGINS` — Allowed CORS origins
+- `LOG_LEVEL` — Log level (default: INFO)
 
-## ⚙️ Install & Run
+## 🚀 Run
 
-### Local
+### Local development
 
 ```bash
+# Install dependencies
 pip install -r requirements.txt
+
+# Configure environment
 cp env.example .env
+
+# Start server
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
 ### Docker
 
 ```bash
-docker build -t aggregation-service:latest .
-docker run -p 8000:8000 aggregation-service:latest
+# Build image
+docker build -t flet-montrg/aggregation-service:latest .
+
+# Run container
+docker run -p 8000:8000 flet-montrg/aggregation-service:latest
 ```
 
-### 🧪 Tests
+### K8s (Kind)
+
+- **NodePort**: `30005` (see project [README](../../README.md) for port layout)
+
+### Tests & quality
 
 ```bash
+# Run tests
 ./test.sh
+
+# Format and lint
 ./test.sh --format --lint
 ```
 
-## 🗄️ Database
+## 🗄️ Database schema
 
-Uses:
+The service uses these tables:
 
-- `<schema>.temperature` — Temperature data
-- `<schema>.locations` — Location info
-- `<schema>.aggregations` — Aggregation results
-- `<schema>.aggregation_jobs` — Aggregation job metadata
+- `flet_montrg.temperature` — raw temperature data
+- `flet_montrg.locations` — location metadata
+- `flet_montrg.aggregations` — aggregation results
+- `flet_montrg.aggregation_jobs` — aggregation job state
 
----
+## 🐛 Troubleshooting
 
-**Last Updated**: February 2026
+- DB connection failed: Check `DATABASE_URL`, DB server, network. Test with `psql` or `docker logs <container>`.
+- Empty aggregation results: Verify source data in `temperature` and `locations`; check date range and filters.
+
+## 📚 References
+
+- [FastAPI](https://fastapi.tiangolo.com/)
+- [SQLAlchemy](https://docs.sqlalchemy.org/)
+- [Pydantic](https://docs.pydantic.dev/)
+- [Pytest](https://docs.pytest.org/)
+
+Last updated: February 2026
