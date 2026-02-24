@@ -1,6 +1,6 @@
 # Alert & Notification API Examples
 
-Quick reference for Alert (port 30007) and Notification (port 30009) APIs.
+Quick reference for Alert (port 30006) and Notification (port 30008) APIs.
 
 ---
 
@@ -19,7 +19,7 @@ Sensors: `TEMPIOT-A011` ~ `TEMPIOT-A038` (loc_id `A011`–`A038`). Each sensor h
 ### cURL — create alert
 
 ```bash
-curl -X POST "http://localhost:30007/api/v1/alerts/" \
+curl -X POST "http://localhost:30006/api/v1/alerts/" \
   -H "Content-Type: application/json" \
   -d '{
     "loc_id": "A011",
@@ -41,7 +41,7 @@ curl -X POST "http://localhost:30007/api/v1/alerts/" \
 ```python
 import requests
 
-r = requests.post("http://localhost:30007/api/v1/alerts/", json={
+r = requests.post("http://localhost:30006/api/v1/alerts/", json={
     "loc_id": "A011",
     "sensor_id": "TEMPIOT-A011",
     "alert_type": "pcv_temperature",
@@ -68,7 +68,7 @@ print(r.json())
 ### cURL — create notification
 
 ```bash
-curl -X POST "http://localhost:30009/api/v1/notifications/" \
+curl -X POST "http://localhost:30008/api/v1/notifications/" \
   -H "Content-Type: application/json" \
   -d '{"alert_id": 1, "subscription_id": 1, "notify_type": "email", "notify_id": "user@example.com"}'
 ```
@@ -79,7 +79,7 @@ curl -X POST "http://localhost:30009/api/v1/notifications/" \
 import requests
 
 # Create alert
-alert = requests.post("http://localhost:30007/api/v1/alerts/", json={
+alert = requests.post("http://localhost:30006/api/v1/alerts/", json={
     "loc_id": "A011", "sensor_id": "TEMPIOT-A011", "alert_type": "pcv_temperature",
     "alert_level": "orange", "threshold_id": 3, "threshold_type": "pcv_temperature",
     "threshold_level": "orange", "measured_value": 35.5, "threshold_min": 33.00,
@@ -87,7 +87,7 @@ alert = requests.post("http://localhost:30007/api/v1/alerts/", json={
 }).json()
 
 # Create notification for that alert
-notif = requests.post("http://localhost:30009/api/v1/notifications/", json={
+notif = requests.post("http://localhost:30008/api/v1/notifications/", json={
     "alert_id": alert["alert_id"], "subscription_id": 1,
     "notify_type": "email", "notify_id": "admin@company.com"
 }).json()
@@ -96,4 +96,4 @@ print("Notification id:", notif["notification_id"])
 
 ---
 
-**Swagger:** [http://localhost:30005]/ — use alert-service and alert-notification-service sections.
+**Swagger:** [http://localhost:30001]/ — use alert-service and alert-notification-service sections.

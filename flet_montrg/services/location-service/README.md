@@ -1,6 +1,14 @@
 # 🗺️ Location Service
 
-Sensor location management API
+Sensor location hierarchy and lookup API (factory → building → floor → area).
+
+## ✨ Features
+
+- 📍 Location CRUD and filters (by factory, building, floor, multi-filter)
+- 📖 RESTful API with Swagger / ReDoc
+- 💓 Health and readiness (DB check)
+- 🧪 Unit and integration tests
+- 🐳 Docker and Kubernetes–ready
 
 ## 📁 Project Structure
 
@@ -10,7 +18,7 @@ location-service/
 │   ├── main.py                 # FastAPI entry
 │   ├── api/v1/
 │   │   ├── api.py              # API v1 router
-│   │   └── endpoints/locations.py
+│   │   └── endpoints/location.py
 │   ├── core/
 │   │   ├── config.py
 │   │   ├── database.py
@@ -33,13 +41,33 @@ location-service/
 └── README.md
 ```
 
-## ⚙️ Install & Run
+## 🚀 Run
+
+### Local
 
 ```bash
 pip install -r requirements.txt
 cp env.example .env
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
-# or: docker build -t location-service . && docker run -p 8000:8000 --env-file .env location-service
+```
+
+### Docker
+
+```bash
+docker build -t location-service .
+docker run -p 8000:8000 --env-file .env location-service
+```
+
+### K8s (Kind)
+
+- **NodePort**: `30003` (see project [README](../../README.md) for port layout)
+
+```bash
+docker build -t location-service:latest .
+kind load docker-image location-service:latest --name <cluster-name>
+kubectl apply -f ../../k8s/location/
+kubectl port-forward -n <namespace> svc/location-service 30003:80
+# open http://localhost:30003/docs
 ```
 
 ## 🔌 API Endpoints
@@ -52,7 +80,7 @@ uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 GET /api/v1/locations/
 ```
 
-**Example response:**
+Example response:
 
 ```json
 [
@@ -67,9 +95,9 @@ GET /api/v1/locations/
 GET /api/v1/locations/{loc_id}
 ```
 
-- **Parameters**: `loc_id` (string, required), e.g. `"LOC001"`
+- Parameters: `loc_id` (string, required), e.g. `"LOC001"`
 
-**Example response:**
+Example response:
 
 ```json
 {
@@ -87,7 +115,7 @@ GET /api/v1/locations/{loc_id}
 GET /api/v1/locations/factory/{factory}
 ```
 
-- **Parameters**: `factory` (string, required), e.g. `"Factory-A"`
+- Parameters: `factory` (string, required), e.g. `"Factory-A"`
 
 #### By building
 
@@ -95,7 +123,7 @@ GET /api/v1/locations/factory/{factory}
 GET /api/v1/locations/building/{building}
 ```
 
-- **Parameters**: `building` (string, required), e.g. `"Bld-1"`
+- Parameters: `building` (string, required), e.g. `"Bld-1"`
 
 #### By floor
 
@@ -103,7 +131,7 @@ GET /api/v1/locations/building/{building}
 GET /api/v1/locations/floor/{floor}
 ```
 
-- **Parameters**: `floor` (integer, required), e.g. `1`
+- Parameters: `floor` (integer, required), e.g. `1`
 
 #### Multi-filter
 
@@ -111,7 +139,7 @@ GET /api/v1/locations/floor/{floor}
 GET /api/v1/locations/filter?factory={factory}&building={building}&floor={floor}
 ```
 
-- **Query params** (all optional): `factory`, `building`, `floor`
+- Query params (all optional): `factory`, `building`, `floor`
 
 ### Basic endpoints
 
@@ -174,8 +202,8 @@ pytest -x
 
 ### Test layout
 
-- **Unit** (`tests/unit/`): Business logic, e.g. `test_location_service.py`
-- **Integration** (`tests/integration/`): API endpoints, e.g. `test_location_api.py`
+- Unit (`tests/unit/`): Business logic, e.g. `test_location_service.py`
+- Integration (`tests/integration/`): API endpoints, e.g. `test_location_api.py`
 
 ## 📈 Monitoring
 
@@ -198,33 +226,19 @@ readinessProbe:
 
 ## 🔗 Integration
 
-**Realtime Service** calls this service for sensor locations. **Aggregation Service** can enrich results with location info.
-
-## 🚀 Deployment (Kubernetes)
-
-```bash
-docker build -t location-service:latest .
-kind load docker-image location-service:latest --name <cluster-name>
-kubectl apply -f k8s/
-kubectl get pods -n <namespace> -l app=location-service
-
-# Access
-kubectl port-forward -n <namespace> svc/location-service 30002:80
-open http://localhost:30002/docs
-```
+Realtime Service calls this service for sensor locations. Aggregation Service can enrich results with location info.
 
 ## 💡 Adding a new filter
 
 1. Update Pydantic schema (`models/schemas.py`), e.g. add `area` to `LocationFilter`.
 2. Add service logic in `services/location_service.py`.
-3. Add endpoint in `api/v1/endpoints/locations.py`.
+3. Add endpoint in `api/v1/endpoints/location.py`.
 4. Add tests under `tests/`.
 
 ## 🐛 Troubleshooting
 
-**DB connection failed**: Check `DATABASE_URL`, DB server, network. Test with `psql` or `docker logs location-service`.
-
-**Empty locations**: Verify data in DB, e.g. `SELECT * FROM <schema>.<table> LIMIT 10`; insert sample rows if needed.
+- DB connection failed: Check `DATABASE_URL`, DB server, network. Test with `psql` or `docker logs location-service`.
+- Empty locations: Verify data in DB, e.g. `SELECT * FROM <schema>.<table> LIMIT 10`; insert sample rows if needed.
 
 ## 📚 References
 
@@ -233,14 +247,4 @@ open http://localhost:30002/docs
 - [Pydantic](https://docs.pydantic.dev/)
 - [Pytest](https://docs.pytest.org/)
 
-## ✨ Features
-
-- Location CRUD and filters
-- RESTful API, Swagger/ReDoc
-- Structured logging, health/ready endpoints
-- Async DB, unit/integration tests
-- Docker and Kubernetes–ready
-
----
-
-**Last Updated**: February 2026
+Last updated: February 2026

@@ -1,125 +1,142 @@
-# 📊 API Dashboard Service (Integrated Swagger)
+# 📚 Integrated Swagger Service
 
-Centralized API monitoring dashboard. Monitors and visualizes the status of all microservices running in the Kubernetes cluster.
+Unified API documentation and proxy for all microservices. Exposes a single Swagger UI and forwards API calls to the right backend services (with optional service discovery and monitoring).
 
-## 📋 Features
+**Note:** The separate Web dashboard UI has been removed. `app/static` remains from earlier use (e.g. Swagger UI assets only).
 
-- **Real-time service status**: Health and status of each API service
-- **Service discovery**: Auto-discovery of services from Kubernetes
-- **Endpoint monitoring**: Status of each service’s API endpoints
-- **Performance metrics**: Response time, error rate, request count
-- **Web dashboard**: Flet-based interactive UI
-- **Auto-refresh**: Live updates
+## ✨ Features
 
-## 🚀 Monitored Services
+- 📖 Single Swagger UI for all microservice APIs
+- 🔀 API proxy: one base URL for every backend
+- 🔍 Service discovery from Kubernetes
+- 💓 Health checks and status per service
+- 📊 Metrics and monitoring endpoints (when enabled)
+- 🔄 Live docs from each service’s OpenAPI spec
+
+## 🎯 Proxied / monitored services
 
 - aggregation-service
 - alert-service
-- alert-history-service
+- alert-subscription-service
+- alert-notification-service
 - location-service
 - realtime-service
 - thresholds-service
+- sensor-threshold-mapping-service
 
-## 📁 Structure
+## 📁 Directory structure
 
 ```text
-api-dashboard-service/
+integrated-swagger-service/
 ├── app/
-│   ├── main.py                 # FastAPI entry
-│   ├── api/routes/
-│   │   ├── dashboard.py        # Dashboard API
-│   │   ├── services.py         # Service status API
-│   │   └── metrics.py          # Metrics API
+│   ├── __init__.py
+│   ├── main.py              # FastAPI app entry
+│   ├── api/
+│   │   ├── routes/
+│   │   │   ├── swagger.py   # Swagger / OpenAPI aggregation
+│   │   │   ├── proxy.py     # API proxy to backends
+│   │   │   └── ui.py        # UI routes (if any)
+│   │   └── router.py
 │   ├── core/
 │   │   ├── config.py
 │   │   ├── logging_config.py
-│   │   └── kubernetes.py       # K8s client
+│   │   └── kubernetes.py    # K8s client for discovery
 │   ├── models/
+│   │   ├── service.py
+│   │   └── swagger.py
 │   ├── services/
-│   │   ├── dashboard.py        # Flet dashboard
+│   │   ├── swagger_collector.py
+│   │   ├── discovery.py
 │   │   ├── monitor.py
-│   │   └── discovery.py
-├── tests/
+│   │   └── dashboard.py
+│   └── static/              # Legacy; Swagger UI assets (Web UI removed)
 ├── Dockerfile
 ├── requirements.txt
 ├── env.example
 └── README.md
 ```
 
-## ⚙️ Install & Run
+## 🚀 Run
 
-### 🖥️ Local
+### Local
 
 ```bash
 pip install -r requirements.txt
 cp env.example .env
+# Edit .env as needed
+
 uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
-### 🐳 Docker
+### Docker
 
 ```bash
-docker build -t api-dashboard-service .
-docker run -p 8000:8000 -p 8080:8080 api-dashboard-service
+docker build -t flet-montrg/integrated-swagger-service:latest .
+docker run -p 8000:8000 flet-montrg/integrated-swagger-service:latest
 ```
 
-### ☸️ Kubernetes
+### K8s (Kind)
 
 ```bash
-kubectl apply -f ../k8s/api-dashboard/
+kubectl apply -f ../../k8s/integrated-swagger/
 ```
 
-## 🌐 Access
+- **NodePort**: `30001` (see project [README](../../README.md) for port layout)
 
-- **API docs**: [http://localhost:8000/docs]
-- **Dashboard UI**: [http://localhost:8080]
-- **Health**: [http://localhost:8000/health]
-- **Metrics**: [http://localhost:8000/metrics]
+## 🌐 URLs
 
-## 🔌 API Endpoints
+- **Swagger UI**: <http://localhost:8000/docs> (or `/` depending on app)
+- **OpenAPI JSON**: <http://localhost:8000/openapi.json>
+- **Health**: <http://localhost:8000/health>
+- **Metrics**: <http://localhost:8000/metrics> (if implemented)
 
-### 📊 Dashboard
+## 🔌 API endpoints
 
-- `GET /api/v1/dashboard/services` — All service status
-- `GET /api/v1/dashboard/overview` — Overview
+### Dashboard / overview
 
-### 🔍 Service monitoring
+- `GET /api/v1/dashboard/services` — list service status
+- `GET /api/v1/dashboard/overview` — dashboard overview
 
-- `GET /api/v1/services` — Monitored services list
-- `GET /api/v1/services/{service_name}/status` — Service status
-- `GET /api/v1/services/{service_name}/health` — Health check
+### Service monitoring
 
-### 📈 Metrics
+- `GET /api/v1/services` — list of monitored services
+- `GET /api/v1/services/{service_name}/status` — status for one service
+- `GET /api/v1/services/{service_name}/health` — health for one service
 
-- `GET /api/v1/metrics/overview` — Overall metrics
-- `GET /api/v1/metrics/{service_name}` — Per-service metrics
+### Metrics
 
-## 🔧 Environment Variables
+- `GET /api/v1/metrics/overview` — metrics overview
+- `GET /api/v1/metrics/{service_name}` — metrics for one service
 
-See `env.example`.
+## ⚙️ Environment variables
 
-## 🧪 Tests
+See `env.example`. Typical: `DATABASE_URL` (if used), `HOST`, `PORT` (default 8000), K8s namespace for discovery, logging level.
 
-```bash
-pytest
-```
+## 📈 Monitoring (when enabled)
 
-## 📡 Monitoring
-
-1. Service status (online/offline)
-2. API endpoint status per service
+1. Service status: online/offline per service
+2. API endpoint checks for each service
 3. Performance: response time, throughput, error rate
-4. Resource usage (CPU, memory where available)
+4. Resource usage: CPU/memory where available
 5. Alerts on failure (planned)
 
-## 🚀 Roadmap
+## 📋 Possible improvements
 
-- [ ] Real-time alerts
-- [ ] History storage
+- [ ] Real-time alerting
+- [ ] Persisted history for metrics
 - [ ] Custom dashboard layout
 - [ ] Per-service SLA monitoring
-- [ ] Integrated log viewer
+- [ ] Unified log viewer
 
----
+## 🐛 Troubleshooting
 
-**Last Updated**: February 2026
+- Backend services not discovered: Check K8s namespace and service names; verify in-cluster DNS or configured URLs.
+- Proxy returns 502/503: Ensure target microservices are running and reachable from this pod.
+
+## 📚 References
+
+- [FastAPI](https://fastapi.tiangolo.com/)
+- [OpenAPI/Swagger](https://swagger.io/specification/)
+- [Pytest](https://docs.pytest.org/)
+
+Last updated: February 2026

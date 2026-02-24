@@ -1,0 +1,87 @@
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+name: flet-cluster
+nodes:
+- role: control-plane
+  kubeadmConfigPatches:
+  - |
+    kind: KubeletConfiguration
+    apiVersion: kubelet.config.k8s.io/v1beta1
+    authentication:
+      anonymous:
+        enabled: false
+    authorization:
+      mode: Webhook
+    cgroupDriver: systemd
+    featureGates:
+      RotateKubeletServerCertificate: true
+    serverTLSBootstrap: true
+  extraPortMappings:
+  # 배포된 서비스 (30000 web → 30009 sensor-threshold-mapping)
+  - containerPort: 30000  # web-service
+    hostPort: 30000
+    protocol: TCP
+  - containerPort: 30001  # integrated-swagger-service
+    hostPort: 30001
+    protocol: TCP
+  - containerPort: 30002  # thresholds-service
+    hostPort: 30002
+    protocol: TCP
+  - containerPort: 30003  # location-service
+    hostPort: 30003
+    protocol: TCP
+  - containerPort: 30004  # realtime-service
+    hostPort: 30004
+    protocol: TCP
+  - containerPort: 30005  # aggregation-service
+    hostPort: 30005
+    protocol: TCP
+  - containerPort: 30006  # alert-service
+    hostPort: 30006
+    protocol: TCP
+  - containerPort: 30007  # alert-subscription-service
+    hostPort: 30007
+    protocol: TCP
+  - containerPort: 30008  # alert-notification-service
+    hostPort: 30008
+    protocol: TCP
+  - containerPort: 30009  # sensor-threshold-mapping-service
+    hostPort: 30009
+    protocol: TCP
+  # 예약 (향후 서비스 / metrics 미구현 시 추가)
+  - containerPort: 30010  # alert-evaluation-service (planned)
+    hostPort: 30010
+    protocol: TCP
+  - containerPort: 30011
+    hostPort: 30011
+    protocol: TCP
+  - containerPort: 30012
+    hostPort: 30012
+    protocol: TCP
+  - containerPort: 30013
+    hostPort: 30013
+    protocol: TCP
+  - containerPort: 30014
+    hostPort: 30014
+    protocol: TCP
+  - containerPort: 30015
+    hostPort: 30015
+    protocol: TCP
+  - containerPort: 30016
+    hostPort: 30016
+    protocol: TCP
+  - containerPort: 30017
+    hostPort: 30017
+    protocol: TCP
+  - containerPort: 30018
+    hostPort: 30018
+    protocol: TCP
+  - containerPort: 30019
+    hostPort: 30019
+    protocol: TCP
+  - containerPort: 30020
+    hostPort: 30020
+    protocol: TCP
+  - containerPort: 30604  # kubernetes-dashboard
+    hostPort: 8083
+    protocol: TCP

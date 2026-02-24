@@ -5,14 +5,19 @@
 import asyncio
 import sys
 import os
+from pathlib import Path
 
-# 프로젝트 루트를 Python 경로에 추가
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+# 서비스 루트 디렉토리를 Python 경로에 추가
+service_root = Path(__file__).parent.parent
+if str(service_root) not in sys.path:
+    sys.path.insert(0, str(service_root))
 
 from app.core.config import settings
 from app.core.database import get_db
 from app.services.temperature_service import TemperatureService
+import pytest
 
+@pytest.mark.asyncio
 async def test_temperature_service():
     """온도 서비스 테스트"""
     try:

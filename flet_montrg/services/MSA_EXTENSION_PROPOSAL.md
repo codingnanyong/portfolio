@@ -4,20 +4,21 @@
 
 ### Existing Services & Ports
 
-- ✅ **thresholds-service** (30001): Threshold CRUD
-- ✅ **location-service** (30002): Location & sensor info
-- ✅ **realtime-service** (30003): Real-time data (depends on thresholds, location)
-- ✅ **aggregation-service** (30004): Period aggregation
-- ✅ **integrated-swagger-service** (30005): Unified API docs
+- ✅ **web-service** (30000): Dashboard Web UI
+- ✅ **integrated-swagger-service** (30001): Unified API docs
+- ✅ **thresholds-service** (30002): Threshold CRUD
+- ✅ **location-service** (30003): Location & sensor info
+- ✅ **realtime-service** (30004): Real-time data (depends on thresholds, location)
+- ✅ **aggregation-service** (30005): Period aggregation
 
 ### Alert Domain Ports (current deployment)
 
-- **30007**: alert-service
-- **30008**: alert-subscription-service
-- **30009**: alert-notification-service
-- **30011**: sensor-threshold-mapping-service
+- **30006**: alert-service
+- **30007**: alert-subscription-service
+- **30008**: alert-notification-service
+- **30009**: sensor-threshold-mapping-service
 - **30010**: alert-evaluation-service (internal; no external exposure)
-- **30006, 30012+**: Reserved / future use
+- **30011+**: Reserved / future use
 
 ### New Requirements (ERD)
 
@@ -39,27 +40,27 @@
    ├── Responsibility: Create, query, resolve alerts
    ├── Data: alerts table
    ├── Depends on: thresholds-service, location-service, sensor-threshold-mapping-service
-   └── Port: 30007
+   └── Port: 30006
 
 2. alert-subscription-service (Subscription management)
    ├── Responsibility: Subscription CRUD, filtering by subscriber
    ├── Data: alert_subscriptions table
    ├── Depends on: location-service (location hierarchy)
-   └── Port: 30008
+   └── Port: 30007
 
 3. alert-notification-service (Notification delivery)
    ├── Responsibility: Send notifications, store delivery history
    ├── Data: alert_notifications table
    ├── Depends on: alert-service, alert-subscription-service
-   └── Port: 30009
+   └── Port: 30008
 
 4. sensor-threshold-mapping-service (Sensor–threshold mapping)
    ├── Responsibility: Per-sensor threshold mapping
    ├── Data: sensor_threshold_map table
    ├── Depends on: thresholds-service, location-service
-   └── Port: 30011
+   └── Port: 30009
 
-5. alert-evaluation-service (Threshold evaluation worker) 
+5. alert-evaluation-service (Threshold evaluation worker)
    ├── Responsibility: Background threshold breach detection
    ├── Data: read-only temperature_raw
    ├── Run: Scheduler (e.g. every 1 min) or event-driven (post-ETL)
