@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 28">
+  <!-- 원형 배경 -->
+  <circle cx="14" cy="14" r="14" fill="#3fb950"/>
+  <!-- 온도계 윤곽선: 흰색 -->
+  <rect x="12" y="4" width="4" height="13" rx="2" fill="none" stroke="white" stroke-width="1.2"/>
+  <circle cx="14" cy="19.5" r="2.2" fill="none" stroke="white" stroke-width="1.2"/>
+  <!-- 수은주: 빨간색 -->
+  <rect x="12.7" y="9" width="2.6" height="6" rx="0.4" fill="#e11d48"/>
+  <circle cx="14" cy="19.5" r="1.2" fill="#e11d48"/>
+</svg>

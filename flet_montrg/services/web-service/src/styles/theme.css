@@ -1,0 +1,275 @@
+/**
+ * Edge HMI 스타일 테마 변수 (light/dark)
+ * data-theme는 html(documentElement)에 설정됨
+ * :root 기본값 = 다크 (스크립트 미실행/캐시 시에도 다크 유지)
+ */
+:root {
+  color-scheme: dark;
+  --bg-primary: #0d1117;
+  --bg-secondary: #161b22;
+  --bg-card: #21262d;
+  --bg-card-hover: #30363d;
+  --border: #30363d;
+  --border-strong: #6e7681;
+  --text-primary: #e6edf3;
+  --text-secondary: #8b949e;
+  --text-tertiary: #6e7681;
+  --accent: #3fb950;
+  --accent-hover: #56d364;
+  --accent-muted: rgba(63, 185, 80, 0.15);
+  --accent-active: #56d364;
+  --sidebar-width: 260px;
+  --bg-tertiary: #21262d;
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-card-hover: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme='light'] {
+  color-scheme: light;
+  --bg-primary: #f0f2f5;
+  --bg-secondary: #ffffff;
+  --bg-card: #ffffff;
+  --bg-card-hover: #fafbfc;
+  --border: #d1d9e0;
+  --border-strong: #8b949e;
+  --text-primary: #0d1117;
+  --text-secondary: #4b5563;
+  --text-tertiary: #6b7280;
+  --accent: #238636;
+  --accent-hover: #2ea043;
+  --accent-muted: rgba(35, 134, 54, 0.12);
+  --accent-active: #166534;
+  --bg-tertiary: #e8eaed;
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.06);
+  --shadow-card-hover: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+[data-theme='dark'] {
+  color-scheme: dark;
+  --bg-primary: #0d1117;
+  --bg-secondary: #161b22;
+  --bg-card: #21262d;
+  --bg-card-hover: #30363d;
+  --border: #30363d;
+  --border-strong: #6e7681;
+  --text-primary: #e6edf3;
+  --text-secondary: #8b949e;
+  --text-tertiary: #6e7681;
+  --accent: #3fb950;
+  --accent-hover: #56d364;
+  --accent-muted: rgba(63, 185, 80, 0.15);
+  --accent-active: #56d364;
+  --bg-tertiary: #21262d;
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-card-hover: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', Helvetica, Arial, sans-serif;
+  font-size: 15px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  letter-spacing: -0.01em;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+/* Service 드롭다운: 다크 모드에서 잘 보이도록 */
+.service-select {
+  background: var(--bg-secondary) !important;
+  border-color: var(--border) !important;
+  color: var(--text-primary) !important;
+}
+.service-select option {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+[data-theme='dark'] .service-select,
+[data-theme='dark'] .service-select option {
+  background: #161b22 !important;
+  color: #e6edf3 !important;
+}
+/* 네이티브 드롭다운 리스트도 다크로 (지원하는 브라우저) */
+.service-select {
+  color-scheme: dark;
+}
+[data-theme='light'] .service-select {
+  color-scheme: light;
+}
+
+/* Swagger UI: 상단 바 + 정보 영역 전부 숨김 (어떤 레이아웃/캐시에서도 적용) */
+/* 1) 상단 바: Swagger 로고, URL 입력, Explore 버튼 */
+#swagger .swagger-ui .topbar,
+#swagger .swagger-ui .topbar-wrapper,
+#swagger .swagger-ui .download-url-wrapper,
+#swagger .swagger-ui [class*="topbar"],
+#swagger .swagger-ui [class*="download-url"] {
+  display: none !important;
+}
+/* 2) 정보 영역: 제목, 버전, openapi 링크, Authorize — display + 영역 제거 */
+#swagger .swagger-ui .information-container.wrapper,
+#swagger .swagger-ui .information-container,
+#swagger .swagger-ui .info,
+#swagger .swagger-ui .info .info__contact,
+#swagger .swagger-ui .info .link,
+#swagger .swagger-ui .auth-wrapper,
+#swagger .swagger-ui .auth-container,
+#swagger .swagger-ui .scheme-container,
+#swagger .swagger-ui .btn-group,
+#swagger .swagger-ui [class*="information"],
+#swagger .swagger-ui [class*="auth-wrapper"] {
+  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  overflow: hidden !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+#swagger .swagger-ui .wrapper .info {
+  display: none !important;
+}
+#swagger .swagger-ui > section:first-of-type .information-container,
+#swagger .swagger-ui > section:first-of-type .info {
+  display: none !important;
+}
+/* 3) scheme-container 전용 — 스킴 선택 영역 완전 제거 */
+#swagger #swagger-ui .scheme-container,
+#swagger .swagger-ui .scheme-container,
+#swagger .swagger-ui div.scheme-container,
+#swagger .swagger-ui .information-container.wrapper .scheme-container {
+  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+}
+/* 4) Authorize가 들어 있는 상위 블록만 통째로 숨김 (태그 목록은 유지) */
+#swagger .swagger-ui .wrapper:has(.auth-wrapper),
+#swagger .swagger-ui .wrapper:has(.auth-container),
+#swagger .swagger-ui section:has(.auth-wrapper) {
+  display: none !important;
+}
+
+/* Swagger UI: 배경과 동일하게 — 카드/패널 느낌 제거, 자연스럽게 본문에 녹임 */
+#swagger .swagger-ui,
+[data-theme='dark'] .swagger-ui,
+[data-theme='light'] .swagger-ui {
+  background: transparent !important;
+}
+[data-theme='dark'] .swagger-ui .information-container,
+[data-theme='dark'] .swagger-ui .information-container .info {
+  background: transparent !important;
+  border-color: transparent !important;
+  color: var(--text-primary) !important;
+}
+/* 태그 섹션(line_mst 등): 배경·테두리 제거 → 페이지와 동일 */
+#swagger .swagger-ui .opblock-tag-section,
+#swagger .swagger-ui .opblock-tag-section .opblock-tag,
+#swagger .swagger-ui .opblock-tag-section h3,
+#swagger .swagger-ui .opblock-tag {
+  background: transparent !important;
+  border: none !important;
+  border-bottom: 1px solid var(--border) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+#swagger .swagger-ui .opblock-tag-section .opblock-tag:hover {
+  background: var(--bg-tertiary) !important;
+}
+/* 서비스(태그) 설명 텍스트 가독성 — 연한 회색으로 잘 보이게 */
+#swagger .swagger-ui .opblock-tag small,
+#swagger .swagger-ui .opblock-tag .opblock-desc,
+#swagger .swagger-ui .opblock-tag-section .opblock-tag small,
+#swagger .swagger-ui .opblock-tag-section .opblock-tag .opblock-desc,
+#swagger .swagger-ui .opblock-tag-section .opblock-tag .opblock-tag-description,
+#swagger .swagger-ui h3.opblock-tag small,
+#swagger .swagger-ui .opblock-tag-section h3 small {
+  color: var(--text-secondary) !important;
+  opacity: 1 !important;
+  font-size: 0.8125rem !important;
+}
+[data-theme='dark'] #swagger .swagger-ui .opblock-tag small,
+[data-theme='dark'] #swagger .swagger-ui .opblock-tag .opblock-desc,
+[data-theme='dark'] #swagger .swagger-ui .opblock-tag-section .opblock-tag small,
+[data-theme='dark'] #swagger .swagger-ui .opblock-tag-section h3 small {
+  color: #b1bac4 !important;
+}
+/* opblock(개별 API): 카드 배경 제거 */
+#swagger .swagger-ui .opblock,
+#swagger .swagger-ui .opblock-summary {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+[data-theme='dark'] .swagger-ui .opblock-body,
+[data-theme='dark'] .swagger-ui section.models,
+[data-theme='dark'] .swagger-ui .model-box {
+  background: transparent !important;
+  border-color: var(--border) !important;
+  color: var(--text-primary) !important;
+}
+[data-theme='dark'] .swagger-ui .opblock {
+  background: transparent !important;
+  border-color: var(--border) !important;
+}
+[data-theme='dark'] .swagger-ui .opblock-summary {
+  background: transparent !important;
+  border-color: var(--border) !important;
+}
+[data-theme='dark'] .swagger-ui .opblock-tag,
+[data-theme='dark'] .swagger-ui .opblock-tag-section h3,
+[data-theme='dark'] .swagger-ui .opblock-summary-path,
+[data-theme='dark'] .swagger-ui .opblock-summary-description,
+[data-theme='dark'] .swagger-ui table thead tr th,
+[data-theme='dark'] .swagger-ui table tbody tr td {
+  color: var(--text-primary) !important;
+}
+[data-theme='dark'] .swagger-ui input[type=text],
+[data-theme='dark'] .swagger-ui input[type=number],
+[data-theme='dark'] .swagger-ui textarea,
+[data-theme='dark'] .swagger-ui select {
+  background: var(--bg-secondary) !important;
+  border-color: var(--border) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Sidebar scrollbar */
+.sidebarNav {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+.sidebarNav::-webkit-scrollbar { width: 6px; }
+.sidebarNav::-webkit-scrollbar-track { background: transparent; }
+.sidebarNav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+.serviceListScroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+  min-height: 0;
+}
+.serviceListScroll::-webkit-scrollbar { width: 4px; }
+.serviceListScroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+/* 한/ENG 버튼: 테두리는 hover 시에만 표시 */
+.lang-toggle-btn {
+  border-color: transparent;
+}
+.lang-toggle-btn:hover {
+  border-color: var(--border);
+}
