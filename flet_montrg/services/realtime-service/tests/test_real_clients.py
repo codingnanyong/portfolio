@@ -1,33 +1,33 @@
 #!/usr/bin/env python3
 """
-실제 서비스에 연결하여 클라이언트 테스트
+Client tests against real running services.
 """
 import asyncio
 import sys
 import os
 from pathlib import Path
 
-# 서비스 루트 디렉토리를 Python 경로에 추가
+# Add service root directory to Python path
 service_root = Path(__file__).parent.parent
 if str(service_root) not in sys.path:
     sys.path.insert(0, str(service_root))
 
-# 환경변수 설정 (클라이언트 생성 전에 설정)
-os.environ["LOCATION_SERVICE_URL"] = "http://localhost:30002"
-os.environ["THRESHOLDS_SERVICE_URL"] = "http://localhost:30001"
+# Set environment variables (must be set before client creation)
+os.environ["LOCATION_SERVICE_URL"] = "http://localhost:30003"
+os.environ["THRESHOLDS_SERVICE_URL"] = "http://localhost:30002"
 
 from app.core.logging import setup_logging, get_logger
 from app.clients.location_client import LocationClient
 from app.clients.thresholds_client import ThresholdsClient
 import pytest
 
-# 로깅 설정
+# Configure logging
 setup_logging()
 logger = get_logger(__name__)
 
 @pytest.mark.asyncio
 async def test_location_client():
-    """Location 클라이언트 테스트"""
+    """Test Location client against real service."""
     print("=" * 50)
     print("Testing Location Client with Real Service")
     print("=" * 50)
@@ -79,7 +79,7 @@ async def test_location_client():
 
 @pytest.mark.asyncio
 async def test_thresholds_client():
-    """Thresholds 클라이언트 테스트"""
+    """Test Thresholds client against real service."""
     print("\n" + "=" * 50)
     print("Testing Thresholds Client with Real Service")
     print("=" * 50)
@@ -90,7 +90,7 @@ async def test_thresholds_client():
     try:
         print(f"Thresholds Service URL: {thresholds_client.base_url}")
         
-        # 1. 모든 임계치 조회
+        # 1. Get all thresholds
         print("\n1. Getting all thresholds...")
         thresholds = await thresholds_client.get_all_thresholds(limit=10)
         print(f"Found {len(thresholds)} thresholds")
@@ -101,7 +101,7 @@ async def test_thresholds_client():
                 print(f"  {i+1}. Type: {thresh.threshold_type}, Level: {thresh.level}")
                 print(f"     Range: {thresh.min_value} ~ {thresh.max_value}")
         
-        # 2. pcv_temperature 임계치 조회
+        # 2. Get pcv_temperature thresholds
         print(f"\n2. Getting pcv_temperature thresholds...")
         pcv_thresholds = await thresholds_client.get_applicable_thresholds("pcv_temperature")
         print(f"Found {len(pcv_thresholds)} pcv_temperature thresholds")
@@ -111,7 +111,7 @@ async def test_thresholds_client():
             for thresh in pcv_thresholds:
                 print(f"  - Level: {thresh.level}, Range: {thresh.min_value} ~ {thresh.max_value}")
         
-        # 3. temperature 임계치 조회
+        # 3. Get temperature thresholds
         print(f"\n3. Getting temperature thresholds...")
         temp_thresholds = await thresholds_client.get_applicable_thresholds("temperature")
         print(f"Found {len(temp_thresholds)} temperature thresholds")
@@ -121,7 +121,7 @@ async def test_thresholds_client():
             for thresh in temp_thresholds:
                 print(f"  - Level: {thresh.level}, Range: {thresh.min_value} ~ {thresh.max_value}")
         
-        # 4. 존재하지 않는 타입 테스트
+        # 4. Test non-existent threshold type
         print(f"\n4. Testing non-existent threshold type...")
         fake_thresholds = await thresholds_client.get_applicable_thresholds("fake_type")
         print(f"Result for fake type: {len(fake_thresholds)} thresholds")
@@ -135,17 +135,17 @@ async def test_thresholds_client():
 
 @pytest.mark.asyncio
 async def test_integration():
-    """통합 테스트"""
+    """Integration test using both clients and core logic."""
     print("\n" + "=" * 50)
     print("Integration Test")
     print("=" * 50)
     
     try:
-        # 새로운 클라이언트 인스턴스 생성
+        # Create new client instances
         location_client = LocationClient()
         thresholds_client = ThresholdsClient()
         
-        # 1. 위치 정보에서 센서 ID 가져오기
+        # 1. Get sensor IDs from locations
         print("\n1. Getting sensor IDs from locations...")
         locations = await location_client.get_all_locations(limit=3)
         
@@ -155,7 +155,7 @@ async def test_integration():
         
         print(f"Found {len(locations)} locations for integration test")
         
-        # 2. 각 센서에 대해 임계치 검사 시뮬레이션
+        # 2. Simulate threshold checks for each sensor
         print("\n2. Simulating threshold checks for each sensor...")
         pcv_thresholds = await thresholds_client.get_applicable_thresholds("pcv_temperature")
         
@@ -167,7 +167,7 @@ async def test_integration():
         for thresh in pcv_thresholds:
             print(f"  - {thresh.level}: {thresh.min_value} ~ {thresh.max_value}")
         
-        # 3. 샘플 데이터로 임계치 검사
+        # 3. Check thresholds with sample data
         from app.services.temperature_service import TemperatureService
         service = TemperatureService(None)
         
@@ -190,18 +190,18 @@ async def test_integration():
         traceback.print_exc()
 
 async def main():
-    """메인 테스트 함수"""
+    """Main entrypoint to run all real-service tests."""
     print("Starting Real Service Client Tests...")
     print("Using NodePort URLs for direct connection")
     print("=" * 50)
     
-    # Location 클라이언트 테스트
+    # Test Location client
     await test_location_client()
     
-    # Thresholds 클라이언트 테스트
+    # Test Thresholds client
     await test_thresholds_client()
     
-    # 통합 테스트
+    # Run integration test
     await test_integration()
     
     print("\n" + "=" * 50)

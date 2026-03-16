@@ -1,31 +1,46 @@
 <script>
-  import { view, selectedService, availableServices, loading, error, swaggerUI, refreshTrigger } from '../state/appStore.js';
-  import { locale } from '../state/localeStore.js';
-  import { getLabels, getServiceLabel, applyServiceDescriptions } from '../config/labels.js';
-  import { toDisplayName } from '../utils/serviceHelpers.js';
-  import { API_BASE } from '../config/config.js';
-  import { initSwaggerUI } from '../swagger/init.js';
+  import {
+    view,
+    selectedService,
+    availableServices,
+    loading,
+    error,
+    swaggerUI,
+    refreshTrigger,
+  } from "../state/appStore.js";
+  import { locale } from "../state/localeStore.js";
+  import { getLabels, getServiceLabel, applyServiceDescriptions } from "../config/labels.js";
+  import { toDisplayName } from "../utils/serviceHelpers.js";
+  import { API_BASE } from "../config/config.js";
+  import { initSwaggerUI } from "../swagger/init.js";
 
   $: L = getLabels($locale);
 
-  $: serviceDisplayName = $selectedService === 'integrated'
-    ? L.integratedShort
-    : getServiceLabel($selectedService, $locale, toDisplayName($selectedService, $availableServices[$selectedService]));
+  $: serviceDisplayName =
+    $selectedService === "integrated"
+      ? L.integratedShort
+      : getServiceLabel(
+          $selectedService,
+          $locale,
+          toDisplayName($selectedService, $availableServices[$selectedService])
+        );
 
   $: serviceNames = Object.keys($availableServices);
 
   function getSpecUrl(service) {
-    const base = API_BASE || (typeof window !== 'undefined' ? window.location.origin : '');
-    if (service === 'integrated') return base + '/openapi.json';
-    return base + '/api/v1/swagger/services/' + service + '/spec';
+    const base = API_BASE || (typeof window !== "undefined" ? window.location.origin : "");
+    if (service === "integrated") return base + "/openapi.json";
+    return base + "/api/v1/swagger/services/" + service + "/spec";
   }
 
   function loadSwagger() {
-    error.set('');
+    error.set("");
     loading.set(true);
     const prev = $swaggerUI;
     if (prev) {
-      try { prev.getSystem().getActions().clear(); } catch (_) {}
+      try {
+        prev.getSystem().getActions().clear();
+      } catch {}
     }
     const ui = initSwaggerUI(
       getSpecUrl($selectedService),
@@ -41,11 +56,11 @@
   }
 
   // locale 변경 시 Swagger UI 내 서비스 설명 문구 갱신
-  $: if ($view === 'swagger' && !$loading && $locale) {
+  $: if ($view === "swagger" && !$loading && $locale) {
     setTimeout(() => applyServiceDescriptions($locale), 0);
   }
 
-  $: if ($view === 'swagger' && $selectedService) {
+  $: if ($view === "swagger" && $selectedService) {
     const _ = $refreshTrigger;
     // Defer so #swagger-ui exists in DOM before SwaggerUIBundle mounts
     setTimeout(() => loadSwagger(), 0);
@@ -56,7 +71,7 @@
   }
 </script>
 
-{#if $view === 'swagger'}
+{#if $view === "swagger"}
   <section id="swagger" class="max-w-[min(1200px,100%)]">
     {#if $error}
       <p class="font-medium mb-4 text-red-600">{$error}</p>
@@ -77,14 +92,18 @@
         <select
           class="service-select rounded px-3 py-1.5 min-w-[220px] text-sm font-medium outline-none focus:ring-1 focus:ring-[var(--accent)]"
           style="background: var(--bg-secondary); border: 1px solid var(--border); color: var(--text-primary);"
-          value={$selectedService}
-          on:change={handleServiceSelect}
+          value="{$selectedService}"
+          on:change="{handleServiceSelect}"
         >
           <option value="integrated">{L.integratedAll}</option>
           {#each serviceNames as name}
             {@const spec = $availableServices[name]}
-            <option value={name} disabled={spec && !spec.is_available}>
-              {spec && !spec.is_available ? '(unavailable) ' : ''}{getServiceLabel(name, $locale, toDisplayName(name, spec))} (v{spec?.version || '?'})
+            <option value="{name}" disabled="{spec && !spec.is_available}">
+              {spec && !spec.is_available ? "(unavailable) " : ""}{getServiceLabel(
+                name,
+                $locale,
+                toDisplayName(name, spec)
+              )} (v{spec?.version || "?"})
             </option>
           {/each}
         </select>

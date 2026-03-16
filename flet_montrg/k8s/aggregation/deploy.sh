@@ -66,6 +66,6 @@ echo "🧹 사용하지 않는 Docker 이미지 정리..."
 docker image prune -f
 
 echo "✅ aggregation-service 배포 완료!"
-echo "🌐 서비스 접속: http://localhost:30004"
-echo "📊 API 문서: http://localhost:30004/docs"
-echo "🔍 헬스체크: http://localhost:30004/health"
+echo "🌐 서비스 접속: http://localhost:30005"
+echo "📊 API 문서: http://localhost:30005/docs"
+echo "🔍 헬스체크: http://localhost:30005/health"

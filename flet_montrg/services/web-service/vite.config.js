@@ -6,8 +6,8 @@ export default defineConfig({
   base: './',
   server: {
     proxy: {
-      '/openapi.json': { target: 'http://localhost:30005', changeOrigin: true },
-      '/api': { target: 'http://localhost:30005', changeOrigin: true },
+      '/openapi.json': { target: 'http://localhost:30001', changeOrigin: true },
+      '/api': { target: 'http://localhost:30001', changeOrigin: true },
     },
   },
 });

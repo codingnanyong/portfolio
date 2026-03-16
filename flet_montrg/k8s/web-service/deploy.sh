@@ -72,8 +72,8 @@ docker builder prune -f
 
 echo ""
 echo "✅ web-service 배포 완료!"
-echo "🔗 웹 UI: http://localhost:30012"
-echo "   (API 연동: http://localhost:30012?apiBase=http://localhost:30005)"
+echo "🔗 웹 UI (NodePort): http://localhost:30000"
+echo "   (API 연동: http://localhost:30000?apiBase=http://localhost:30001)"
 echo ""
 echo "📋 유용한 명령어:"
 echo "  kubectl logs -f -l app=$SERVICE_NAME -n $NAMESPACE"

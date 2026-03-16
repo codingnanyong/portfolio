@@ -13,7 +13,8 @@
 
 ## 📋 Project Overview
 
-An end-to-end data platform that collects and processes IoT sensor data from manufacturing sites in real time for perceived-temperature monitoring and alerting. Kubernetes-based microservices with optional Airflow pipelines (see main repo for pipeline code).
+An end-to-end data platform that collects and processes IoT sensor data from manufacturing sites in real time for perceived-temperature monitoring and alerting.  
+Kubernetes-based microservices with optional Airflow pipelines (see main repo for pipeline code).
 
 ### ⚙️ Core Features
 
@@ -44,7 +45,7 @@ portfolio/
     │   ├── alert-notification-service/
     │   ├── sensor-threshold-mapping-service/
     │   ├── integrated-swagger-service/
-    │   └── web-service/         # Dashboard (Svelte + Vite)
+    │   └── web-service/         # Integrated APIs Web Service (Svelte + Vite)
     └── k8s/                     # Kubernetes manifests
         ├── thresholds/
         ├── location/
@@ -63,36 +64,37 @@ Note: Data pipeline (Airflow ETL) lives in the main [flet-montrg](https://github
 
 ### Microservices (Kubernetes)
 
-| Service                            | Port   | Description                    |
-| ---------------------------------- | ------ | ------------------------------ |
-| thresholds-service                 | 30001  | Threshold CRUD                 |
-| location-service                   | 30002  | Sensor location info           |
-| realtime-service                   | 30003  | Real-time data & threshold     |
-| aggregation-service                | 30004  | Hourly aggregation             |
-| integrated-swagger-service         | 30005  | Unified API docs               |
-| alert-service                      | 30007  | Alert creation & management    |
-| alert-subscription-service         | 30008  | Alert subscriptions            |
-| alert-notification-service         | 30009  | Notification history           |
-| sensor-threshold-mapping-service   | 30011  | Sensor–threshold mapping       |
+| Service                          | Port  | Description                         |
+| -------------------------------- | ----- | ----------------------------------- |
+| web-service                      | 30000 | Integrated APIs Web (Svelte + Vite) |
+| integrated-swagger-service       | 30001 | Unified API docs                    |
+| thresholds-service               | 30002 | Threshold CRUD                      |
+| location-service                 | 30003 | Sensor location info                |
+| realtime-service                 | 30004 | Real-time data & threshold          |
+| aggregation-service              | 30005 | Hourly aggregation                  |
+| alert-service                    | 30006 | Alert creation & management         |
+| alert-subscription-service       | 30007 | Alert subscriptions                 |
+| alert-notification-service       | 30008 | Notification history                |
+| sensor-threshold-mapping-service | 30009 | Sensor–threshold mapping            |
 
-Web dashboard (Svelte/Vite) is served separately; points to integrated-swagger for API.
+Integrated APIs Web (Svelte/Vite) is served via `web-service` (port 30000) and points to `integrated-swagger-service` for API.
 
 ```text
 ┌───────────────────────────────────────────────────────────┐
 │                Kubernetes Cluster (Kind)                  │
 ├───────────────────────────────────────────────────────────┤
-│  Thresholds(30001)      Location(30002)                   │
+│  Thresholds(30002)      Location(30003)                   │
 │        \                    /                             │
-│         +---> Sensor-Threshold-Mapping(30011)             │
+│         +---> Sensor-Threshold-Mapping(30009)             │
 │                         |                                 │
-│               Realtime(30003) ---> Aggregation(30004)     │
+│               Realtime(30004) ---> Aggregation(30005)     │
 │                                                           │
-│  Alert(30007) <--> Alert-Subscription(30008)              │
+│  Alert(30006) <--> Alert-Subscription(30007)              │
 │                              |                            │
 │                              v                            │
-│                   Alert-Notification(30009)               │
+│                   Alert-Notification(30008)               │
 │                                                           │
-│  Integrated-Swagger(30005)                                │
+│  Integrated-Swagger(30001)                                │
 └───────────────────────┬───────────────────────────────────┘
                         v
             PostgreSQL / TimescaleDB
@@ -117,4 +119,4 @@ See each service directory’s README for API, run instructions, and schema.
 
 **Taehyeon Ryu | Data Engineer**  
 📎 [GitHub](https://github.com/codingnanyong) · 📧 <codingnanyong@gmail.com>  
-*Last updated: February 2026*
+_Last updated: February 2026_

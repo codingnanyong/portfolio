@@ -167,9 +167,9 @@ async def main():
     print(f"Environment: {settings.environment}")
     print(f"Debug: {settings.debug}")
     
-    # Set environment variables for actual service testing
-    os.environ["LOCATION_SERVICE_URL"] = "http://localhost:30002" # NodePort for location-service
-    os.environ["THRESHOLDS_SERVICE_URL"] = "http://localhost:30001" # NodePort for thresholds-service
+    # Set environment variables for actual service testing (Kind NodePort)
+    os.environ["LOCATION_SERVICE_URL"] = "http://localhost:30003"  # NodePort for location-service
+    os.environ["THRESHOLDS_SERVICE_URL"] = "http://localhost:30002"  # NodePort for thresholds-service
     
     # Create new settings instance with updated env vars
     from app.core.config import Settings

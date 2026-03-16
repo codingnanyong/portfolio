@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """
-간단한 서비스 테스트 스크립트
+Simple service test script.
 """
 import asyncio
 import sys
 import os
 from pathlib import Path
 
-# 서비스 루트 디렉토리를 Python 경로에 추가
+# Add service root directory to Python path
 service_root = Path(__file__).parent.parent
 if str(service_root) not in sys.path:
     sys.path.insert(0, str(service_root))
@@ -19,14 +19,14 @@ import pytest
 
 @pytest.mark.asyncio
 async def test_temperature_service():
-    """온도 서비스 테스트"""
+    """Test temperature service."""
     try:
         print(f"Testing {settings.app_name}...")
         print(f"Database URL: {settings.database_url}")
         print(f"Location Service URL: {settings.location_service_url}")
         print(f"Thresholds Service URL: {settings.thresholds_service_url}")
         
-        # 데이터베이스 연결 테스트
+        # Test database connection
         async for db in get_db():
             service = TemperatureService(db)
             
