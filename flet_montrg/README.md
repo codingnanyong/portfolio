@@ -59,29 +59,29 @@ flet_montrg/
 
 | Service | Port | Main endpoints | Description | Status |
 | ------- | ----- | -------------- | ----------- | ------ |
-| **thresholds-service** | 30001 | `/api/v1/thresholds/` | Threshold CRUD | ✅ Done |
-| **location-service** | 30002 | `/api/v1/locations/` | Location info | ✅ Done |
-| **realtime-service** | 30003 | `/api/v1/realtime/` | Real-time sensor data | ✅ Done |
-| **aggregation-service** | 30004 | `/api/v1/aggregation/pcv_temperature/` | Aggregation | ✅ Done |
-| **integrated-swagger-service** | 30005 | `/` | Unified API docs | ✅ Done |
-| **alert-service** | 30007 | `/api/v1/alerts/` | Alert creation & management | ✅ Done |
-| **alert-subscription-service** | 30008 | `/api/v1/subscriptions/` | Alert subscriptions | ✅ Done |
-| **alert-notification-service** | 30009 | `/api/v1/notifications/` | Notification history | ✅ Done |
-| **sensor-threshold-mapping-service** | 30011 | `/api/v1/mappings/` | Sensor–threshold mapping | ✅ Done |
+| **thresholds-service** | 30002 | `/api/v1/thresholds/` | Threshold CRUD | ✅ Done |
+| **location-service** | 30003 | `/api/v1/locations/` | Location info | ✅ Done |
+| **realtime-service** | 30004 | `/api/v1/realtime/` | Real-time sensor data | ✅ Done |
+| **aggregation-service** | 30005 | `/api/v1/aggregation/pcv_temperature/` | Aggregation | ✅ Done |
+| **integrated-swagger-service** | 30001 | `/` | Unified API docs | ✅ Done |
+| **alert-service** | 30006 | `/api/v1/alerts/` | Alert creation & management | ✅ Done |
+| **alert-subscription-service** | 30007 | `/api/v1/subscriptions/` | Alert subscriptions | ✅ Done |
+| **alert-notification-service** | 30008 | `/api/v1/notifications/` | Notification history | ✅ Done |
+| **sensor-threshold-mapping-service** | 30009 | `/api/v1/mappings/` | Sensor–threshold mapping | ✅ Done |
 
 ### API docs
 
-Each service exposes interactive docs via Swagger UI:
+Each service exposes interactive docs via Swagger UI (NodePort on Kind cluster):
 
-- Thresholds: <http://localhost:30001/docs>
-- Location: <http://localhost:30002/docs>
-- Realtime: <http://localhost:30003/docs>
-- Aggregation: <http://localhost:30004/docs>
-- **Integrated Swagger** (all services): <http://localhost:30005/>
-- Alert: <http://localhost:30007/docs>
-- Alert Subscription: <http://localhost:30008/docs>
-- Alert Notification: <http://localhost:30009/docs>
-- Sensor-Threshold Mapping: <http://localhost:30011/docs>
+- Thresholds: <http://localhost:30002/docs>
+- Location: <http://localhost:30003/docs>
+- Realtime: <http://localhost:30004/docs>
+- Aggregation: <http://localhost:30005/docs>
+- **Integrated Swagger** (all services): <http://localhost:30001/>
+- Alert: <http://localhost:30006/docs>
+- Alert Subscription: <http://localhost:30007/docs>
+- Alert Notification: <http://localhost:30008/docs>
+- Sensor-Threshold Mapping: <http://localhost:30009/docs>
 
 ## 🏗️ Architecture
 
@@ -91,18 +91,18 @@ Each service exposes interactive docs via Swagger UI:
 │                Namespace: flet-montrg                     │
 ├───────────────────────────────────────────────────────────┤
 │                                                           │
-│  Thresholds(30001)      Location(30002)                   │
+│  Thresholds(30002)      Location(30003)                   │
 │        \                    /                             │
-│         +---> Sensor-Threshold-Mapping(30011)             │
+│         +---> Sensor-Threshold-Mapping(30009)             │
 │                         |                                 │
-│               Realtime(30003) ---> Aggregation(30004)     │
+│               Realtime(30004) ---> Aggregation(30005)     │
 │                                                           │
-│  Alert(30007) <--> Alert-Subscription(30008)              │
+│  Alert(30006) <--> Alert-Subscription(30007)              │
 │                              |                            │
 │                              v                            │
-│                   Alert-Notification(30009)               │
+│                   Alert-Notification(30008)               │
 │                                                           │
-│  Integrated-Swagger(30005)                                │
+│  Integrated-Swagger(30001)                                │
 │                                                           │
 └───────────────────────┬───────────────────────────────────┘
                         │
@@ -210,15 +210,15 @@ kubectl logs -f -n flet-montrg <pod-name>
 ### 7. Access
 
 ```bash
-kubectl port-forward -n flet-montrg service/thresholds-service 30001:80
-kubectl port-forward -n flet-montrg service/location-service 30002:80
-kubectl port-forward -n flet-montrg service/realtime-service 30003:80
-kubectl port-forward -n flet-montrg service/aggregation-service 30004:80
+kubectl port-forward -n flet-montrg service/thresholds-service 30002:80
+kubectl port-forward -n flet-montrg service/location-service 30003:80
+kubectl port-forward -n flet-montrg service/realtime-service 30004:80
+kubectl port-forward -n flet-montrg service/aggregation-service 30005:80
 
-curl http://localhost:30001/health
-curl http://localhost:30002/api/v1/locations/
-curl http://localhost:30003/api/v1/realtime/
-curl http://localhost:30004/api/v1/aggregation/pcv_temperature/?start_date=20240922&end_date=20240922
+curl http://localhost:30002/health
+curl http://localhost:30003/api/v1/locations/
+curl http://localhost:30004/api/v1/realtime/
+curl http://localhost:30005/api/v1/aggregation/pcv_temperature/?start_date=20240922&end_date=20240922
 ```
 
 ## 🧭 Local development
