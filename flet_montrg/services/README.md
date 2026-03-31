@@ -34,9 +34,9 @@ flet_montrg/
 
 ### Data services
 
-- **30002**: thresholds-service (Threshold CRUD API)
-- **30003**: location-service (Sensor location API)
-- **30004**: realtime-service (Real-time status API)
+- **30001**: thresholds-service (Threshold CRUD API)
+- **30002**: location-service (Sensor location API)
+- **30003**: realtime-service (Real-time status API)
 - **30005**: aggregation-service (Period query API)
 
 ### Alert services
@@ -47,12 +47,12 @@ flet_montrg/
 
 ### Mapping service
 
-- **30009**: sensor-threshold-mapping-service (Sensor–threshold mapping)
+- **30010**: sensor-threshold-mapping-service (Sensor–threshold mapping)
 
 ### Web & unified service
 
 - **30000**: web-service (Dashboard Web UI)
-- **30001**: integrated-swagger-service (Unified API docs & proxy)
+- **30004**: integrated-swagger-service (Unified API docs & proxy)
 
 ## 🎯 Main Features
 
@@ -125,8 +125,8 @@ cd k8s/integrated-swagger && ./deploy.sh
 
 All service APIs are available via integrated Swagger:
 
-- **Swagger UI**: http://&lt;K8S_INGRESS&gt;:30001/
-- **Proxy API**: http://&lt;K8S_INGRESS&gt;:30001/api/{resource}/
+- **Swagger UI**: http://&lt;K8S_INGRESS&gt;:30004/
+- **Proxy API**: http://&lt;K8S_INGRESS&gt;:30004/api/{resource}/
 
 Examples:
 

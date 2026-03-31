@@ -13,13 +13,12 @@ spec:
   ingress:
   - {}  # 우선 전체 허용(문제 분리 후 좁히기)
   egress:
-  - to:
-    - ipBlock:
-        cidr: 172.23.0.3/32  # Postgres (kind 네트워크 IP)
+  # PostgreSQL — DATABASE_URL 호스트(예: 172.18.0.10 storage_network, 203.x)와 CNI 라우트가 맞아야 함
+  - to: []
     ports:
     - protocol: TCP
       port: 5432
-  - to: []  # DNS 허용
+  - to: []  # DNS
     ports:
     - protocol: TCP
       port: 53

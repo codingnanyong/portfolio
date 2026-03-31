@@ -1,0 +1,10 @@
+# 적용: kubectl apply -k /home/de/apps/flet_montrg/k8s/kubelet-csr-approver
+# 제거: kubectl delete -k /home/de/apps/flet_montrg/k8s/kubelet-csr-approver
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- serviceaccount.yaml
+- clusterrole.yaml
+- clusterrolebinding.yaml
+- deployment.yaml

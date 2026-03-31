@@ -11,10 +11,10 @@ from ...services.discovery import get_service_discovery
 
 logger = logging.getLogger(__name__)
 
-router = APIRouter(prefix="/api/proxy", tags=["proxy"])
+router = APIRouter(prefix="/api/svc", tags=["integrated-routing"])
 
 # 간단한 API 라우터 (짧은 URL용)
-simple_router = APIRouter(prefix="/api", tags=["simple-proxy"])
+simple_router = APIRouter(prefix="/api", tags=["simple-routing"])
 
 
 @router.api_route("/{service_name}/{path:path}", 
@@ -55,7 +55,7 @@ async def api_proxy(service_name: str, path: str, request: Request):
         if request.url.query:
             target_url += f"?{request.url.query}"
         
-        logger.info(f"Proxying request: {service_name} -> {target_url}")
+        logger.info(f"Routing request: {service_name} -> {target_url}")
         
         # 요청 헤더 복사 (호스트 헤더 제외)
         headers = dict(request.headers)
@@ -99,13 +99,13 @@ async def api_proxy(service_name: str, path: str, request: Request):
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Error proxying request to {service_name}/{path}: {e}")
-        raise HTTPException(status_code=500, detail=f"Proxy error: {str(e)}")
+        logger.error(f"Error routing request to {service_name}/{path}: {e}")
+        raise HTTPException(status_code=500, detail=f"Upstream error: {str(e)}")
 
 
 @router.options("/{service_name}/{path:path}")
 async def api_proxy_options(service_name: str, path: str):
-    """API 프록시 CORS preflight 요청 처리"""
+    """통합 라우팅 CORS preflight"""
     return Response(
         status_code=200,
         headers={
@@ -117,15 +117,12 @@ async def api_proxy_options(service_name: str, path: str):
     )
 
 
-# ======== 간단한 API 프록시 (짧은 URL) ========
+# ======== 짧은 URL 라우팅 (/api/{resource}/...) ========
 
 @simple_router.api_route("/{resource_name}/{path:path}", 
                         methods=["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"])
 async def simple_api_proxy(resource_name: str, path: str, request: Request):
-    """리소스명으로 간단한 마이크로서비스 API 프록시
-    
-    예: /api/thresholds/... -> thresholds-service/api/v1/thresholds/...
-    """
+    """리소스명으로 백엔드 경로 매핑 (예: /api/thresholds/... → thresholds-service)"""
     
     # 리소스명을 서비스명으로 매핑
     resource_to_service = {
@@ -147,7 +144,7 @@ async def simple_api_proxy(resource_name: str, path: str, request: Request):
             detail=f"Resource '{resource_name}' not found. Available resources: {available_resources}"
         )
     
-    logger.info(f"Simple proxy: {resource_name} -> {service_name}, path: /{path}")
+    logger.info(f"Short route: {resource_name} -> {service_name}, path: /{path}")
     
     # 실제 API 경로 구성 (/api/v1/ 추가)
     full_path = f"api/v1/{resource_name}/{path}"
@@ -182,7 +179,7 @@ async def simple_api_proxy(resource_name: str, path: str, request: Request):
         if request.url.query:
             target_url += f"?{request.url.query}"
         
-        logger.info(f"Simple proxying request: {resource_name} -> {target_url}")
+        logger.info(f"Routing request: {resource_name} -> {target_url}")
         
         # 요청 헤더 복사 (호스트 헤더 제외)
         headers = dict(request.headers)
@@ -215,13 +212,13 @@ async def simple_api_proxy(resource_name: str, path: str, request: Request):
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Error in simple proxy to {resource_name}/{path}: {e}")
-        raise HTTPException(status_code=500, detail=f"Simple proxy error: {str(e)}")
+        logger.error(f"Error in short route to {resource_name}/{path}: {e}")
+        raise HTTPException(status_code=500, detail=f"Routing error: {str(e)}")
 
 
 @simple_router.options("/{resource_name}/{path:path}")
 async def simple_api_proxy_options(resource_name: str, path: str):
-    """간단한 API 프록시 CORS preflight 요청 처리"""
+    """짧은 URL 라우팅 CORS preflight"""
     return Response(
         status_code=200,
         headers={

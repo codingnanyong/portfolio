@@ -60,14 +60,14 @@ docker run -p 8000:8000 --env-file .env location-service
 
 ### K8s (Kind)
 
-- **NodePort**: `30003` (see project [README](../../README.md) for port layout)
+- **NodePort**: `30002` (see project [README](../../README.md) for port layout)
 
 ```bash
 docker build -t location-service:latest .
 kind load docker-image location-service:latest --name <cluster-name>
 kubectl apply -f ../../k8s/location/
-kubectl port-forward -n <namespace> svc/location-service 30003:80
-# open http://localhost:30003/docs
+kubectl port-forward -n <namespace> svc/location-service 30002:80
+# open http://localhost:30002/docs
 ```
 
 ## 🔌 API Endpoints
@@ -84,8 +84,20 @@ Example response:
 
 ```json
 [
-  { "loc_id": "LOC001", "factory": "Factory-A", "building": "Bld-1", "floor": 1, "area": "Area-1" },
-  { "loc_id": "LOC002", "factory": "Factory-A", "building": "Bld-2", "floor": 1, "area": "Area-2" }
+  {
+    "loc_id": "LOC001",
+    "factory": "Factory-A",
+    "building": "Bld-1",
+    "floor": 1,
+    "area": "Area-1"
+  },
+  {
+    "loc_id": "LOC002",
+    "factory": "Factory-A",
+    "building": "Bld-2",
+    "floor": 1,
+    "area": "Area-2"
+  }
 ]
 ```
 
@@ -161,17 +173,17 @@ GET /api/v1/locations/filter?factory={factory}&building={building}&floor={floor}
 
 ## 🔧 Environment Variables
 
-| Variable | Description | Default |
-| ------------ | ----------------------------- | ---------------- |
-| APP_NAME | Application name | Location Service |
-| APP_VERSION | Version | 1.0.0 |
-| DEBUG | Debug mode | false |
-| ENVIRONMENT | development/production | development |
-| HOST | Server host | 0.0.0.0 |
-| PORT | Server port | 8000 |
-| DATABASE_URL | Database URL | - |
-| CORS_ORIGINS | CORS origins | * |
-| LOG_LEVEL | Log level | INFO |
+| Variable     | Description            | Default          |
+| ------------ | ---------------------- | ---------------- |
+| APP_NAME     | Application name       | Location Service |
+| APP_VERSION  | Version                | 1.0.0            |
+| DEBUG        | Debug mode             | false            |
+| ENVIRONMENT  | development/production | development      |
+| HOST         | Server host            | 0.0.0.0          |
+| PORT         | Server port            | 8000             |
+| DATABASE_URL | Database URL           | -                |
+| CORS_ORIGINS | CORS origins           | \*               |
+| LOG_LEVEL    | Log level              | INFO             |
 
 ### Example .env
 

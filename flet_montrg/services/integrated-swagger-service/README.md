@@ -81,7 +81,7 @@ docker run -p 8000:8000 flet-montrg/integrated-swagger-service:latest
 kubectl apply -f ../../k8s/integrated-swagger/
 ```
 
-- **NodePort**: `30001` (see project [README](../../README.md) for port layout)
+- **NodePort**: `30004` (see project [README](../../README.md) for port layout)
 
 ## 🌐 URLs
 

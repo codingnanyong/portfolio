@@ -15,7 +15,7 @@ spec:
   egress:
   - to:
     - ipBlock:
-        cidr: 172.23.0.3/32  # Postgres (kind 네트워크 IP)
+        cidr: 10.0.0.0/32  # Postgres DB host (placeholder CIDR; replace with your DB endpoint)
     ports:
     - protocol: TCP
       port: 5432

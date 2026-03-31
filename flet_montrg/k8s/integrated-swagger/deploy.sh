@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# integrated-swagger-service Kubernetes deployment script
+# integrated-swagger-service Kubernetes 배포 스크립트
 
 set -e
 
@@ -9,75 +9,76 @@ SERVICE_NAME="integrated-swagger-service"
 IMAGE_NAME="flet-montrg/integrated-swagger-service:latest"
 KIND_CLUSTER="flet-cluster"
 
-echo "🚀 Starting Integrated Swagger Service deployment..."
+echo "🚀 Integrated Swagger Service 배포 시작..."
 
-# Check namespace
-echo "📋 Checking namespace: $NAMESPACE"
+# 네임스페이스 확인
+echo "📋 네임스페이스 확인: $NAMESPACE"
 kubectl get namespace $NAMESPACE || kubectl create namespace $NAMESPACE
 
-# Delete existing resources (optional)
+# 기존 리소스 삭제 (선택사항)
 if [ "$1" == "--clean" ]; then
-    echo "🧹 Cleaning up existing resources..."
+    echo "🧹 기존 리소스 정리..."
     kubectl delete -k . --ignore-not-found=true
     sleep 5
 fi
 
-# Build Docker image (optional - skip if already built)
+# Docker 이미지 빌드 (선택사항 - 이미 빌드되어 있으면 스킵)
 if [ "$1" != "--no-build" ] && [ "$2" != "--no-build" ]; then
-    echo "🔨 Building Docker image..."
+    echo "🔨 Docker 이미지 빌드..."
     cd ../../services/integrated-swagger-service
     docker build -t $IMAGE_NAME .
     cd ../../k8s/integrated-swagger
 fi
 
-# Load image into Kind
-echo "📦 Loading image into Kind..."
+# Kind에 이미지 로드
+echo "📦 Kind에 이미지 로드..."
 kind load docker-image $IMAGE_NAME --name $KIND_CLUSTER
 
-# Deploy RBAC and ConfigMap first
-echo "🔐 Deploying RBAC resources..."
+# RBAC 및 ConfigMap 먼저 배포
+echo "🔐 RBAC 리소스 배포..."
 kubectl apply -f rbac.yaml
 
-echo "⚙️ Deploying ConfigMap..."
+echo "⚙️ ConfigMap 배포..."
 kubectl apply -f configmap.yaml
 
-# Deploy main resources
-echo "📦 Deploying main resources..."
+# 메인 리소스 배포
+echo "📦 메인 리소스 배포..."
 kubectl apply -k .
 
-# Check rollout status
-echo "🔍 Checking rollout status..."
+# 배포 상태 확인
+echo "🔍 배포 상태 확인..."
 kubectl rollout status deployment/$SERVICE_NAME -n $NAMESPACE --timeout=300s || true
 
-# Check service status
-echo "🌐 Checking service status..."
+# 서비스 상태 확인
+echo "🌐 서비스 상태 확인..."
 kubectl get service $SERVICE_NAME -n $NAMESPACE
 
-# Check pod status
-echo "📦 Checking pod status..."
+# Pod 상태 확인
+echo "📦 Pod 상태 확인..."
 kubectl get pods -l app=$SERVICE_NAME -n $NAMESPACE
 
-# Check HPA status
-echo "📈 Checking HPA status..."
+# HPA 상태 확인
+echo "📈 HPA 상태 확인..."
 kubectl get hpa $SERVICE_NAME-hpa -n $NAMESPACE
 
-# Show logs (optional)
+# 로그 확인 (선택사항)
 if [ "$1" == "--logs" ] || [ "$2" == "--logs" ]; then
-    echo "📝 Tail recent logs..."
+    echo "📝 최근 로그 확인..."
     kubectl logs -l app=$SERVICE_NAME -n $NAMESPACE --tail=50
 fi
 
-# Clean up unused Docker images
-echo "🧹 Cleaning up unused Docker images..."
+# 사용하지 않는 Docker 이미지 정리
+echo "🧹 사용하지 않는 Docker 이미지 정리..."
 docker image prune -f
 
-# Show access information
+# 접속 정보 표시
 echo ""
-echo "✅ Integrated Swagger Service deployment completed!"
-echo "🔗 Public access is via web-service (NodePort 30000) — this service is not exposed directly"
-echo "   Swagger UI / API (through web-service): http://localhost:30000"
+echo "✅ Integrated Swagger Service 배포 완료!"
+echo "🔗 API는 web-service(30012)를 통해 접근 — 직접 노출 없음"
+echo "   Swagger UI / API: http://localhost:30012"
+echo "   (내부 ClusterIP로만 web-service nginx가 프록시)"
 echo ""
-echo "📋 Useful commands:"
+echo "📋 유용한 명령어:"
 echo "  kubectl logs -f -l app=$SERVICE_NAME -n $NAMESPACE"
 echo "  kubectl port-forward svc/$SERVICE_NAME 8000:80 -n $NAMESPACE"
 echo "  kubectl port-forward svc/$SERVICE_NAME 8080:8080 -n $NAMESPACE"

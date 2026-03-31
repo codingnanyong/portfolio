@@ -1,0 +1,13 @@
+# docker network inspect … 으로 postgres 컨테이너 IPv4 확인 후 갱신 (재생성 시 IP 바뀔 수 있음)
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: docker-postgres
+  namespace: flet-montrg
+subsets:
+  - addresses:
+      - ip: "10.0.0.8"
+    ports:
+      - name: postgres
+        port: 5432
+        protocol: TCP

@@ -4,7 +4,7 @@ API Dashboard Service - Main Application
 
 import asyncio
 from contextlib import asynccontextmanager
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -14,11 +14,16 @@ import httpx
 
 from .core.config import settings
 from .core.logging_config import setup_logging, get_logger
+from .core.v1_routing import resolve_service_for_v1_resource
 from .models.service import ServiceOverview
 from .models.swagger import IntegratedOpenAPISpec
 from .services.monitor import get_service_monitor, cleanup_monitor
 from .services.discovery import get_service_discovery
-from .services.swagger_collector import get_swagger_collector, cleanup_swagger_collector
+from .services.swagger_collector import (
+    get_swagger_collector,
+    cleanup_swagger_collector,
+    spec_dict_for_swagger_gateway,
+)
 
 # 로깅 설정
 setup_logging()
@@ -43,7 +48,7 @@ async def lifespan(app: FastAPI):
         await swagger_collector.create_integrated_spec()
         logger.info("Swagger collector initialized and integrated spec created")
         
-        logger.info(f"Integrated Swagger API (proxy) available at port {settings.port}")
+        logger.info(f"Integrated Swagger API available at port {settings.port}")
         
         yield
         
@@ -78,7 +83,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# 웹 UI는 web-service(Svelte)에서 제공. 본 서비스는 프록시/API 전용.
+# 웹 UI는 web-service(Svelte)에서 제공. 본 서비스는 통합 문서·API 라우팅 전용.
 
 
 # 헬스체크 엔드포인트
@@ -97,12 +102,12 @@ async def root():
     service_count = len(integrated_spec.services) if integrated_spec else 0
     
     return {
-        "service": "Integrated Swagger API (proxy only)",
+        "service": "Integrated Swagger API",
         "version": settings.version,
         "status": "running",
         "integrated_api_docs": "/openapi.json",
         "integrated_services_count": service_count,
-        "web_ui": "Use web-service (port 30012) for Swagger UI"
+        "web_ui": "Use web-service (NodePort 30000) for Swagger UI"
     }
 
 
@@ -129,9 +134,7 @@ async def get_integrated_openapi_spec():
                     "description": "Felt Montrg API Documentation (API specification collection in progress...)"
                 },
                 "paths": {},
-                "servers": [
-                    {"url": f"http://localhost:{settings.port}", "description": "Felt Montrg API Documentation Service"}
-                ],
+                "servers": [{"url": "/", "description": "현재 호스트"}],
                 "tags": [
                     {"name": "system", "description": "System management endpoints"}
                 ]
@@ -156,7 +159,7 @@ async def get_integrated_openapi_spec():
                 "description": f"Felt Montrg API Documentation (error: {str(e)})"
             },
             "paths": {},
-            "servers": [{"url": f"http://localhost:{settings.port}"}]
+            "servers": [{"url": "/"}]
         }
 
 
@@ -192,8 +195,8 @@ async def get_service_openapi_spec(service_name: str):
         if not service_spec.is_available:
             raise HTTPException(status_code=503, detail=f"Service {service_name} OpenAPI spec is not available: {service_spec.error_message}")
         
-        return service_spec.spec
-        
+        return spec_dict_for_swagger_gateway(service_spec.spec)
+
     except HTTPException:
         raise
     except Exception as e:
@@ -218,84 +221,6 @@ async def refresh_swagger_specs():
     except Exception as e:
         logger.error(f"Error refreshing swagger specs: {e}")
         raise HTTPException(status_code=500, detail=str(e))
-
-
-# API 프록시 기능 (Swagger UI에서 실제 API 테스트를 위한)
-@app.api_route("/api/proxy/{service_name}/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"])
-async def api_proxy(service_name: str, path: str, request: Request):
-    """마이크로서비스 API 프록시"""
-    try:
-        # 서비스 정보 가져오기
-        discovery = get_service_discovery()
-        service = discovery.get_service(service_name)
-        
-        if not service or not service.base_url:
-            raise HTTPException(status_code=404, detail=f"Service {service_name} not found or unavailable")
-        
-        # 대상 URL 구성
-        target_url = f"{service.base_url.rstrip('/')}/{path.lstrip('/')}"
-        if request.url.query:
-            target_url += f"?{request.url.query}"
-        
-        # 요청 헤더 복사 (호스트 헤더 제외)
-        headers = dict(request.headers)
-        headers.pop("host", None)
-        
-        # 요청 본문 가져오기
-        body = await request.body()
-        
-        # HTTP 클라이언트로 실제 서비스에 요청
-        async with httpx.AsyncClient(timeout=30.0) as client:
-            response = await client.request(
-                method=request.method,
-                url=target_url,
-                headers=headers,
-                content=body,
-            )
-        
-        # 응답 헤더 복사 (일부 헤더 제외)
-        excluded_headers = {
-            "content-encoding", "content-length", "transfer-encoding", "connection"
-        }
-        response_headers = {
-            key: value for key, value in response.headers.items()
-            if key.lower() not in excluded_headers
-        }
-        
-        # CORS 헤더 추가
-        response_headers.update({
-            "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, PATCH, HEAD, OPTIONS",
-            "Access-Control-Allow-Headers": "*",
-        })
-        
-        return Response(
-            content=response.content,
-            status_code=response.status_code,
-            headers=response_headers,
-            media_type=response.headers.get("content-type")
-        )
-        
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(f"Error proxying request to {service_name}/{path}: {e}")
-        raise HTTPException(status_code=500, detail=f"Proxy error: {str(e)}")
-
-
-# CORS preflight 요청 처리
-@app.options("/api/proxy/{service_name}/{path:path}")
-async def api_proxy_options(service_name: str, path: str):
-    """API 프록시 CORS preflight 요청 처리"""
-    return Response(
-        status_code=200,
-        headers={
-            "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, PATCH, HEAD, OPTIONS",
-            "Access-Control-Allow-Headers": "*",
-            "Access-Control-Max-Age": "3600",
-        }
-    )
 
 
 # 서비스 관련 API
@@ -467,6 +392,90 @@ async def get_service_metrics(service_name: str):
     except Exception as e:
         logger.error(f"Error getting metrics for {service_name}: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
+
+async def _forward_to_microservice(
+    service_name: str,
+    request: Request,
+    *,
+    upstream_path: Optional[str] = None,
+) -> Response:
+    discovery = get_service_discovery()
+    service = discovery.get_service(service_name)
+    if not service or not service.base_url:
+        raise HTTPException(status_code=404, detail="Upstream service not found")
+
+    path = request.url.path if upstream_path is None else upstream_path
+    target_url = f"{service.base_url.rstrip('/')}{path}"
+    if request.url.query:
+        target_url = f"{target_url}?{request.url.query}"
+
+    headers = dict(request.headers)
+    headers.pop("host", None)
+    body = await request.body()
+
+    async with httpx.AsyncClient(timeout=30.0) as client:
+        response = await client.request(
+            method=request.method,
+            url=target_url,
+            headers=headers,
+            content=body,
+        )
+
+    excluded = {"content-encoding", "content-length", "transfer-encoding", "connection"}
+    response_headers = {
+        k: v for k, v in response.headers.items() if k.lower() not in excluded
+    }
+    response_headers.update({
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, PATCH, HEAD, OPTIONS",
+        "Access-Control-Allow-Headers": "*",
+    })
+    return Response(
+        content=response.content,
+        status_code=response.status_code,
+        headers=response_headers,
+        media_type=response.headers.get("content-type"),
+    )
+
+
+_V1_FWD_METHODS = ["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"]
+
+
+async def _forward_v1_by_resource_key(resource_key: str, request: Request) -> Response:
+    """URL: {host}/api/v1/{리소스}/... — 서비스명은 URL에 없음."""
+    service_name = resolve_service_for_v1_resource(resource_key)
+    if not service_name:
+        raise HTTPException(status_code=404, detail="Not Found")
+    try:
+        return await _forward_to_microservice(service_name, request)
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error("V1 forward error (%s): %s", resource_key, e)
+        raise HTTPException(status_code=500, detail=f"Upstream error: {str(e)}") from e
+
+
+@app.api_route("/api/v1/{resource_key}", methods=_V1_FWD_METHODS)
+async def forward_v1_exact(resource_key: str, request: Request):
+    return await _forward_v1_by_resource_key(resource_key, request)
+
+
+@app.api_route("/api/v1/{resource_key}/{path:path}", methods=_V1_FWD_METHODS)
+async def forward_v1_subpaths(resource_key: str, path: str, request: Request):
+    return await _forward_v1_by_resource_key(resource_key, request)
+
+
+@app.api_route("/api/svc/{service_name}", methods=_V1_FWD_METHODS)
+async def legacy_api_svc_root(service_name: str, request: Request):
+    """구 클라이언트(/api/svc/{서비스명}/...) 호환 — upstream 은 /api/v1/... 만 받음."""
+    return await _forward_to_microservice(service_name, request, upstream_path="/")
+
+
+@app.api_route("/api/svc/{service_name}/{path:path}", methods=_V1_FWD_METHODS)
+async def legacy_api_svc_paths(service_name: str, path: str, request: Request):
+    upstream = "/" + path.lstrip("/")
+    return await _forward_to_microservice(service_name, request, upstream_path=upstream)
 
 
 # 예외 핸들러

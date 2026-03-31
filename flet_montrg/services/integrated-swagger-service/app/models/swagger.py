@@ -59,7 +59,7 @@ class SwaggerUIConfig(BaseModel):
     description: str = "모든 마이크로서비스의 API를 한 곳에서 확인하고 테스트하세요"
     services: List[OpenAPISpec] = []
     integrated_spec_url: str = "/openapi.json"
-    proxy_base_url: str = "/api/proxy"
+    integrated_api_base_url: str = "/"
     deep_linking: bool = True
     display_operation_id: bool = False
     default_models_expand_depth: int = 1

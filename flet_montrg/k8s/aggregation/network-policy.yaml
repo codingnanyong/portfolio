@@ -18,11 +18,17 @@ spec:
     ports:
     - protocol: TCP
       port: 8000
+  - ports:
+    - protocol: TCP
+      port: 8000
   egress:
-  - to:
-    - namespaceSelector:
-        matchLabels:
-          name: flet-montrg
+  - to: []
     ports:
     - protocol: TCP
       port: 5432
+  - to: []
+    ports:
+    - protocol: UDP
+      port: 53
+    - protocol: TCP
+      port: 53

@@ -18,11 +18,19 @@ spec:
     ports:
     - protocol: TCP
       port: 8000
+  # NodePort / 외부: 소스가 Pod가 아니면 namespaceSelector에 매칭되지 않아 위 규칙만으로는 차단됨
+  - ports:
+    - protocol: TCP
+      port: 8000
   egress:
-  - to:
-    - namespaceSelector:
-        matchLabels:
-          name: flet-montrg
+  # Postgres는 보통 Kind 밖 Docker(storage_network, 예: 172.18.0.10:5432)
+  - to: []
     ports:
     - protocol: TCP
       port: 5432
+  - to: []
+    ports:
+    - protocol: UDP
+      port: 53
+    - protocol: TCP
+      port: 53

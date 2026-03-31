@@ -3,6 +3,7 @@ OpenAPI 스펙 수집 및 통합 서비스
 """
 
 import asyncio
+import copy
 import httpx
 import logging
 from datetime import datetime
@@ -14,6 +15,31 @@ from ..models.swagger import OpenAPISpec, IntegratedOpenAPISpec
 from .discovery import get_service_discovery
 
 logger = logging.getLogger(__name__)
+
+# OpenAPI path item / operation 의 servers 는 전역 servers 보다 우선 — 게이트웨이 URL을 망가뜨림
+_HTTP_METHODS_PATH = frozenset(
+    {"get", "put", "post", "delete", "options", "head", "patch", "trace"}
+)
+
+
+def _strip_servers_from_path_items(paths: Optional[Dict[str, Any]]) -> None:
+    if not paths:
+        return
+    for _pk, path_item in paths.items():
+        if not isinstance(path_item, dict):
+            continue
+        path_item.pop("servers", None)
+        for key, op in path_item.items():
+            if key in _HTTP_METHODS_PATH and isinstance(op, dict):
+                op.pop("servers", None)
+
+
+def spec_dict_for_swagger_gateway(spec: Dict[str, Any]) -> Dict[str, Any]:
+    """Try-it 이 항상 현재 호스트의 /api/v1/... 를 쓰도록 servers·경로별 servers 제거."""
+    out = copy.deepcopy(spec)
+    out["servers"] = [{"url": "/", "description": "현재 호스트"}]
+    _strip_servers_from_path_items(out.get("paths"))
+    return out
 
 
 class SwaggerCollector:
@@ -249,8 +275,8 @@ class SwaggerCollector:
                         if "summary" in operation:
                             operation["summary"] = f"[{service_display_name}] {operation['summary']}"
                         
-                        # 서버 설정 추가 (API 프록시를 위한)
-                        operation["x-service-name"] = service_name  # 서비스명 메타데이터 추가
+                        # 내부 스키마/참조용 (브라우저 URL에는 서비스명 미노출)
+                        operation["x-service-name"] = service_name
                         
                 
                 integrated_spec.paths[clean_path] = path_info
@@ -263,10 +289,10 @@ class SwaggerCollector:
             "securitySchemes": all_security_schemes
         }
         
-        # UI 개선: servers 섹션을 제거하여 깔끔한 인터페이스 제공
-        # 프록시는 JavaScript requestInterceptor에서 자동으로 처리됨
-        integrated_spec.servers = []
-        
+        # 동일 출처: 호스트 기준 /api/v1/... 만 사용 (서비스명·중간 경로 없음)
+        integrated_spec.servers = [{"url": "/", "description": "현재 호스트"}]
+        _strip_servers_from_path_items(integrated_spec.paths)
+
         # 3단계: 모든 경로의 스키마 참조 정리
         for path, path_info in integrated_spec.paths.items():
             for method, operation in path_info.items():

@@ -8,27 +8,27 @@ spec:
     matchLabels:
       app: alert-notification-service
   policyTypes:
-  - Ingress
-  - Egress
+    - Ingress
+    - Egress
   ingress:
-  - {}  # 우선 전체 허용(문제 분리 후 좁히기)
+    - {} # 우선 전체 허용(문제 분리 후 좁히기)
   egress:
-  - to:
-    - ipBlock:
-        cidr: 172.18.0.8/32  # Postgres (storage_network IP)
-    ports:
-    - protocol: TCP
-      port: 5432
-  - to:
-    - namespaceSelector:
-        matchLabels:
-          name: flet-montrg
-    ports:
-    - protocol: TCP
-      port: 80  # alert-service, alert-subscription-service
-  - to: []  # DNS 허용
-    ports:
-    - protocol: TCP
-      port: 53
-    - protocol: UDP
-      port: 53
+    - to:
+        - ipBlock:
+            cidr: 10.0.0.0/32 # Postgres (storage_network; 172.18.0.8은 registry)
+      ports:
+        - protocol: TCP
+          port: 5432
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              name: flet-montrg
+      ports:
+        - protocol: TCP
+          port: 80 # alert-service, alert-subscription-service
+    - to: [] # DNS 허용
+      ports:
+        - protocol: TCP
+          port: 53
+        - protocol: UDP
+          port: 53

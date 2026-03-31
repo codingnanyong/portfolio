@@ -13,75 +13,61 @@ nodes:
         authorization:
           mode: Webhook
         cgroupDriver: systemd
+        # serverTLSBootstrap / RotateKubeletServerCertificate 로 켜면 kubelet-serving CSR이
+        # Pending 으로 쌓이고 port-forward·kubelet TLS 등에서 오류가 날 수 있음. Kind 개발용은 끔.
         featureGates:
-          RotateKubeletServerCertificate: true
-        serverTLSBootstrap: true
+          RotateKubeletServerCertificate: false
     extraPortMappings:
-      # Deployed services (30000 web - 30009 sensor-threshold-mapping)
-      - containerPort: 30000 # web-service
+      # listenAddress 0.0.0.0: LAN에서 호스트 공인/LAN IP로 접속 시 필수.
+      # 적용: kind delete cluster && kind create cluster --config 이 파일
+      # 메인 포트: 30000 web → 30001 thresholds → 30002 location → 30003 realtime →
+      #          30004 integrated-swagger(프록시) → 30005 aggregation → 30006~08 alert 계열 → 30010 mapping
+      # Prometheus 메트릭 NodePort(302xx 등)는 호스트 미사용 시 kind 매핑 생략 — 필요 시 여기에 hostPort 추가
+      - containerPort: 30000 # web-service (UI)
         hostPort: 30000
+        listenAddress: "0.0.0.0"
         protocol: TCP
-      - containerPort: 30001 # integrated-swagger-service
+      - containerPort: 30001 # thresholds-service
         hostPort: 30001
+        listenAddress: "0.0.0.0"
         protocol: TCP
-      - containerPort: 30002 # thresholds-service
+      - containerPort: 30002 # location-service
         hostPort: 30002
+        listenAddress: "0.0.0.0"
         protocol: TCP
-      - containerPort: 30003 # location-service
+      - containerPort: 30003 # realtime-service
         hostPort: 30003
+        listenAddress: "0.0.0.0"
         protocol: TCP
-      - containerPort: 30004 # realtime-service
+      - containerPort: 30004 # integrated-swagger-service
         hostPort: 30004
+        listenAddress: "0.0.0.0"
         protocol: TCP
       - containerPort: 30005 # aggregation-service
         hostPort: 30005
+        listenAddress: "0.0.0.0"
         protocol: TCP
       - containerPort: 30006 # alert-service
         hostPort: 30006
+        listenAddress: "0.0.0.0"
         protocol: TCP
       - containerPort: 30007 # alert-subscription-service
         hostPort: 30007
+        listenAddress: "0.0.0.0"
         protocol: TCP
       - containerPort: 30008 # alert-notification-service
         hostPort: 30008
+        listenAddress: "0.0.0.0"
         protocol: TCP
-      - containerPort: 30009 # sensor-threshold-mapping-service
+      - containerPort: 30009 # 예약 (alert-evaluation 등 향후)
         hostPort: 30009
+        listenAddress: "0.0.0.0"
         protocol: TCP
-      # Reserved (future services / metrics when not yet implemented)
-      - containerPort: 30010 # alert-evaluation-service (planned)
+      - containerPort: 30010 # sensor-threshold-mapping-service
         hostPort: 30010
-        protocol: TCP
-      - containerPort: 30011
-        hostPort: 30011
-        protocol: TCP
-      - containerPort: 30012
-        hostPort: 30012
-        protocol: TCP
-      - containerPort: 30013
-        hostPort: 30013
-        protocol: TCP
-      - containerPort: 30014
-        hostPort: 30014
-        protocol: TCP
-      - containerPort: 30015
-        hostPort: 30015
-        protocol: TCP
-      - containerPort: 30016
-        hostPort: 30016
-        protocol: TCP
-      - containerPort: 30017
-        hostPort: 30017
-        protocol: TCP
-      - containerPort: 30018
-        hostPort: 30018
-        protocol: TCP
-      - containerPort: 30019
-        hostPort: 30019
-        protocol: TCP
-      - containerPort: 30020
-        hostPort: 30020
+        listenAddress: "0.0.0.0"
         protocol: TCP
       - containerPort: 30604 # kubernetes-dashboard
         hostPort: 8083
+        listenAddress: "0.0.0.0"
         protocol: TCP
