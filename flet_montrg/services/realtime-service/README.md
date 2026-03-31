@@ -64,7 +64,7 @@ docker run -p 8000:8000 --env-file .env realtime-service
 
 ### K8s (Kind)
 
-- **NodePort**: `30004` (see project [README](../../README.md) for port layout)
+- **NodePort**: `30003` (see project [README](../../README.md) for port layout)
 
 ## 🔌 API endpoints
 

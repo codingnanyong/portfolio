@@ -14,12 +14,13 @@ spec:
   ports:
   - name: http
     port: 80
-    nodePort: 30001
     targetPort: 8000
+    nodePort: 30004
     protocol: TCP
   - name: metrics
     port: 8000
     targetPort: 8000
+    nodePort: 30233
     protocol: TCP
   selector:
     app: integrated-swagger-service

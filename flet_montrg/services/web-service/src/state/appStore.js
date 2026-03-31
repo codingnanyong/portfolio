@@ -1,12 +1,12 @@
-import { writable, derived } from "svelte/store";
-import { filterServices } from "../utils/serviceHelpers.js";
+import { writable, derived } from 'svelte/store';
+import { filterServices } from '../utils/serviceHelpers.js';
 
 export const availableServices = writable({});
-export const selectedService = writable("integrated");
-export const searchQuery = writable("");
-export const view = writable("overview"); // 'overview' | 'swagger'
+export const selectedService = writable('integrated');
+export const searchQuery = writable('');
+export const view = writable('overview'); // 'overview' | 'swagger'
 export const loading = writable(false);
-export const error = writable("");
+export const error = writable('');
 export const swaggerUI = writable(null);
 /** Incremented on refresh success; SwaggerView reacts to force reload */
 export const refreshTrigger = writable(0);

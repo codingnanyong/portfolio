@@ -1,0 +1,56 @@
+# postfinance/kubelet-csr-approver — Kind 클러스터 이름(kind-config name: flet-cluster)에 맞춤
+# 업스트림: https://github.com/postfinance/kubelet-csr-approver (deploy/k8s)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kubelet-csr-approver
+  namespace: kube-system
+  labels:
+    app: kubelet-csr-approver
+    app.kubernetes.io/part-of: flet-montrg
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kubelet-csr-approver
+  template:
+    metadata:
+      annotations:
+        prometheus.io/port: "8080"
+        prometheus.io/scrape: "true"
+      labels:
+        app: kubelet-csr-approver
+    spec:
+      serviceAccountName: kubelet-csr-approver
+      containers:
+        - name: kubelet-csr-approver
+          image: postfinance/kubelet-csr-approver:v1.2.13
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+            requests:
+              memory: "64Mi"
+              cpu: "100m"
+          args:
+            - -metrics-bind-address
+            - ":8080"
+            - -health-probe-bind-address
+            - ":8081"
+            - -leader-election
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8081
+          env:
+            # kubectl get nodes → NAME 이 flet-cluster-control-plane 등일 때 매칭
+            - name: PROVIDER_REGEX
+              value: ^flet-cluster-.+$
+            - name: PROVIDER_IP_PREFIXES
+              value: "0.0.0.0/0,::/0"
+            - name: MAX_EXPIRATION_SEC
+              value: "31622400"
+      tolerations:
+        - effect: NoSchedule
+          key: node-role.kubernetes.io/control-plane
+          operator: Exists

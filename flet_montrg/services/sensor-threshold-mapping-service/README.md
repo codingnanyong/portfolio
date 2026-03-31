@@ -73,7 +73,7 @@ docker run -p 8000:8000 --env-file .env sensor-threshold-mapping-service
 
 ### K8s (Kind)
 
-- **NodePort**: `30009` (see project [README](../../README.md) for port layout)
+- **NodePort**: `30010` (see project [README](../../README.md) for port layout)
 
 ```bash
 # From repo root
@@ -103,4 +103,3 @@ pytest tests/ -v
 - [Pytest](https://docs.pytest.org/)
 
 Last updated: February 2026
-

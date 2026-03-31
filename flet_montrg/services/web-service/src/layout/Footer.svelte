@@ -1,11 +1,5 @@
 <script>
-  import {
-    FOOTER_AUTHOR,
-    FOOTER_EMAIL,
-    GITEA_REPO_URL,
-    FOOTER_LICENSE,
-    LICENSE_URL,
-  } from "../config/constants.js";
+  import { FOOTER_AUTHOR, FOOTER_EMAIL, GITEA_REPO_URL, FOOTER_LICENSE, LICENSE_URL } from '../config/constants.js';
 </script>
 
 <footer
@@ -13,21 +7,7 @@
   style="background: var(--bg-secondary); border-color: var(--border); color: var(--text-tertiary);"
 >
   <span>© {FOOTER_AUTHOR}</span>
-  <a href="mailto:{FOOTER_EMAIL}" class="no-underline hover:underline" style="color: var(--accent);"
-    >Contact</a
-  >
-  <a
-    href="{LICENSE_URL}"
-    target="_blank"
-    rel="noopener noreferrer"
-    class="no-underline hover:underline"
-    style="color: var(--accent);">{FOOTER_LICENSE}</a
-  >
-  <a
-    href="{GITEA_REPO_URL}"
-    target="_blank"
-    rel="noopener noreferrer"
-    class="no-underline hover:underline"
-    style="color: var(--accent);">Repository</a
-  >
+  <a href="mailto:{FOOTER_EMAIL}" class="no-underline hover:underline" style="color: var(--accent);">Contact</a>
+  <a href={LICENSE_URL} target="_blank" rel="noopener noreferrer" class="no-underline hover:underline" style="color: var(--accent);">{FOOTER_LICENSE}</a>
+  <a href={GITEA_REPO_URL} target="_blank" rel="noopener noreferrer" class="no-underline hover:underline" style="color: var(--accent);">Repository</a>
 </footer>

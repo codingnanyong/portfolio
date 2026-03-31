@@ -27,7 +27,7 @@ async def test_location_service():
     print("Testing Location Service Direct Connection")
     print("=" * 50)
     
-    location_url = "http://localhost:30003"
+    location_url = "http://localhost:30002"
     
     async with httpx.AsyncClient(timeout=10.0) as client:
         try:
@@ -80,7 +80,7 @@ async def test_thresholds_service():
     print("Testing Thresholds Service Direct Connection")
     print("=" * 50)
     
-    thresholds_url = "http://localhost:30002"
+    thresholds_url = "http://localhost:30001"
     
     async with httpx.AsyncClient(timeout=10.0) as client:
         try:

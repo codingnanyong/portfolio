@@ -71,4 +71,3 @@ Serve the `dist/` folder with nginx, Apache, S3+CloudFront, or any static host. 
 - [Swagger UI](https://swagger.io/tools/swagger-ui/)
 
 Last updated: February 2026
-

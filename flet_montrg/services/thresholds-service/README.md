@@ -61,7 +61,7 @@ docker run -p 8000:8000 --env-file .env thresholds-service
 
 ### K8s (Kind)
 
-- **NodePort**: `30002` (see project [README](../../README.md) for port layout)
+- **NodePort**: `30001` (see project [README](../../README.md) for port layout)
 
 ## 🔌 API docs
 
@@ -86,7 +86,7 @@ pytest tests/
 - `HOST` — Server host (default: 0.0.0.0)
 - `PORT` — Server port (default: 8000)
 - `DATABASE_URL` — Database URL
-- `CORS_ORIGINS` — CORS origins (default: *)
+- `CORS_ORIGINS` — CORS origins (default: \*)
 - `LOG_LEVEL` — Log level (default: INFO)
 
 ## 🐛 Troubleshooting
@@ -102,4 +102,3 @@ pytest tests/
 - [Pytest](https://docs.pytest.org/)
 
 Last updated: February 2026
-

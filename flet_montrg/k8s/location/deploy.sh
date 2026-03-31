@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# location-service Kubernetes deployment script
+# location-service Kubernetes 배포 스크립트
 
 set -e
 
@@ -9,62 +9,62 @@ SERVICE_NAME="location-service"
 IMAGE_NAME="flet-montrg/location-service:latest"
 KIND_CLUSTER="flet-cluster"
 
-echo "🚀 Starting location-service deployment..."
+echo "🚀 location-service 배포 시작..."
 
-# Check namespace
-echo "📋 Checking namespace: $NAMESPACE"
+# 네임스페이스 확인
+echo "📋 네임스페이스 확인: $NAMESPACE"
 kubectl get namespace $NAMESPACE || kubectl create namespace $NAMESPACE
 
-# Delete existing resources (optional)
+# 기존 리소스 삭제 (선택사항)
 if [ "$1" == "--clean" ]; then
-    echo "🧹 Cleaning up existing resources..."
+    echo "🧹 기존 리소스 정리..."
     kubectl delete -k . --ignore-not-found=true
     sleep 5
 fi
 
-# Build Docker image (optional - skip if already built)
+# Docker 이미지 빌드 (선택사항 - 이미 빌드되어 있으면 스킵)
 if [ "$1" != "--no-build" ] && [ "$2" != "--no-build" ]; then
-    echo "🔨 Building Docker image..."
+    echo "🔨 Docker 이미지 빌드..."
     cd ../../services/location-service
     docker build -t $IMAGE_NAME .
     cd ../../k8s/location
 fi
 
-# Load image into Kind
-echo "📦 Loading image into Kind..."
+# Kind에 이미지 로드
+echo "📦 Kind에 이미지 로드..."
 kind load docker-image $IMAGE_NAME --name $KIND_CLUSTER
 
-# Deploy ConfigMap and Secret
-echo "⚙️ Deploying ConfigMap and Secret..."
+# ConfigMap과 Secret 배포
+echo "⚙️ ConfigMap 및 Secret 배포..."
 kubectl apply -f configmap.yaml
 kubectl apply -f secret.yaml
 
-# Deploy main resources
-echo "📦 Deploying main resources..."
+# 메인 리소스 배포
+echo "📦 메인 리소스 배포..."
 kubectl apply -k .
 
-# Check rollout status
-echo "🔍 Checking rollout status..."
+# 배포 상태 확인
+echo "🔍 배포 상태 확인..."
 kubectl rollout status deployment/$SERVICE_NAME -n $NAMESPACE --timeout=300s || true
 
-# Check service status
-echo "🌐 Checking service status..."
+# 서비스 상태 확인
+echo "🌐 서비스 상태 확인..."
 kubectl get service $SERVICE_NAME -n $NAMESPACE
 
-# Check pod status
-echo "📦 Checking pod status..."
+# Pod 상태 확인
+echo "📦 Pod 상태 확인..."
 kubectl get pods -l app=$SERVICE_NAME -n $NAMESPACE
 
-# Show logs (optional)
+# 로그 확인 (선택사항)
 if [ "$1" == "--logs" ]; then
-    echo "📝 Tail logs..."
+    echo "📝 로그 확인..."
     kubectl logs -l app=$SERVICE_NAME -n $NAMESPACE --tail=50
 fi
 
-# Clean up unused Docker images
-echo "🧹 Cleaning up unused Docker images..."
+# 사용하지 않는 Docker 이미지 정리
+echo "🧹 사용하지 않는 Docker 이미지 정리..."
 docker image prune -f
 
-echo "✅ location-service deployment completed!"
-echo "🌐 Service URL: http://localhost:30003"
-echo "📊 API Docs: http://localhost:30003/docs"
+echo "✅ location-service 배포 완료!"
+echo "🌐 서비스 접속: http://localhost:30002"
+echo "📊 API 문서: http://localhost:30002/docs"

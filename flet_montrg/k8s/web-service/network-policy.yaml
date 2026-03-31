@@ -15,6 +15,12 @@ spec:
     - protocol: TCP
       port: 80
   egress:
+  # CoreDNS: queries are usually UDP 53; TCP 53 is used for large responses
+  - to:
+    - namespaceSelector: {}
+    ports:
+    - protocol: UDP
+      port: 53
   - to:
     - namespaceSelector: {}
     ports:

@@ -1,11 +1,11 @@
 import pytest
 
 class TestThresholdsService:
-    """Unit tests for Thresholds Service"""
+    """Thresholds Service 단위 테스트"""
     
     @pytest.mark.asyncio
     async def test_root_endpoint(self, client):
-        """Test root endpoint"""
+        """루트 엔드포인트 테스트"""
         response = await client.get("/")
         assert response.status_code == 200
         assert response.json()["message"] == "Thresholds Service API"
@@ -13,14 +13,14 @@ class TestThresholdsService:
     
     @pytest.mark.asyncio
     async def test_health_check(self, client):
-        """Test health check endpoint"""
+        """헬스체크 엔드포인트 테스트"""
         response = await client.get("/health")
         assert response.status_code == 200
         assert response.json()["status"] == "healthy"
     
     @pytest.mark.asyncio
     async def test_create_threshold(self, client):
-        """Test threshold creation"""
+        """임계치 생성 테스트"""
         threshold_data = {
             "threshold_type": "temperature",
             "level": "medium",
@@ -38,7 +38,7 @@ class TestThresholdsService:
     
     @pytest.mark.asyncio
     async def test_create_threshold_invalid_values(self, client):
-        """Test creating threshold with invalid values"""
+        """잘못된 값으로 임계치 생성 테스트"""
         threshold_data = {
             "threshold_type": "temperature",
             "level": "medium",
@@ -51,15 +51,15 @@ class TestThresholdsService:
     
     @pytest.mark.asyncio
     async def test_get_thresholds_empty(self, client):
-        """Test getting thresholds when list is empty"""
+        """빈 임계치 목록 조회 테스트"""
         response = await client.get("/api/v1/thresholds/")
         assert response.status_code == 200
         assert response.json() == []
     
     @pytest.mark.asyncio
     async def test_get_thresholds_with_data(self, client):
-        """Test getting thresholds when data exists"""
-        # Create test data
+        """데이터가 있는 임계치 목록 조회 테스트"""
+        # 테스트 데이터 생성
         threshold_data = {
             "threshold_type": "temperature",
             "level": "medium",
@@ -76,8 +76,8 @@ class TestThresholdsService:
     
     @pytest.mark.asyncio
     async def test_get_threshold_by_id(self, client):
-        """Test getting threshold by id"""
-        # Create test data
+        """ID로 특정 임계치 조회 테스트"""
+        # 테스트 데이터 생성
         threshold_data = {
             "threshold_type": "temperature",
             "level": "medium",
@@ -95,15 +95,15 @@ class TestThresholdsService:
     
     @pytest.mark.asyncio
     async def test_get_threshold_by_id_not_found(self, client):
-        """Test getting threshold by non-existent id"""
+        """존재하지 않는 ID로 임계치 조회 테스트"""
         response = await client.get("/api/v1/thresholds/999")
         assert response.status_code == 404
         assert response.json()["detail"] == "Threshold not found"
     
     @pytest.mark.asyncio
     async def test_update_threshold(self, client):
-        """Test updating threshold"""
-        # Create test data
+        """임계치 수정 테스트"""
+        # 테스트 데이터 생성
         threshold_data = {
             "threshold_type": "temperature",
             "level": "medium",
@@ -113,7 +113,7 @@ class TestThresholdsService:
         create_response = await client.post("/api/v1/thresholds/", json=threshold_data)
         threshold_id = create_response.json()["threshold_id"]
         
-        # Data to update
+        # 수정할 데이터
         update_data = {
             "min_value": 15.0,
             "max_value": 60.0,
@@ -130,7 +130,7 @@ class TestThresholdsService:
     
     @pytest.mark.asyncio
     async def test_update_threshold_not_found(self, client):
-        """Test updating non-existent threshold"""
+        """존재하지 않는 임계치 수정 테스트"""
         update_data = {
             "min_value": 15.0,
             "max_value": 60.0
@@ -142,8 +142,8 @@ class TestThresholdsService:
     
     @pytest.mark.asyncio
     async def test_delete_threshold(self, client):
-        """Test deleting threshold"""
-        # Create test data
+        """임계치 삭제 테스트"""
+        # 테스트 데이터 생성
         threshold_data = {
             "threshold_type": "temperature",
             "level": "medium",
@@ -159,21 +159,21 @@ class TestThresholdsService:
         assert data["message"] == f"Threshold {threshold_id} deleted"
         assert data["deleted"]["threshold_id"] == threshold_id
         
-        # Verify deletion
+        # 삭제 확인
         get_response = await client.get(f"/api/v1/thresholds/{threshold_id}")
         assert get_response.status_code == 404
     
     @pytest.mark.asyncio
     async def test_delete_threshold_not_found(self, client):
-        """Test deleting non-existent threshold"""
+        """존재하지 않는 임계치 삭제 테스트"""
         response = await client.delete("/api/v1/thresholds/999")
         assert response.status_code == 404
         assert response.json()["detail"] == "Threshold not found"
     
     @pytest.mark.asyncio
     async def test_get_thresholds_by_type(self, client):
-        """Test getting thresholds filtered by type"""
-        # Create test data
+        """타입별 임계치 조회 테스트"""
+        # 테스트 데이터 생성
         threshold_data_1 = {
             "threshold_type": "temperature",
             "level": "medium",
@@ -205,15 +205,15 @@ class TestThresholdsService:
     
     @pytest.mark.asyncio
     async def test_get_thresholds_by_type_empty(self, client):
-        """Test getting thresholds by type when result is empty"""
+        """타입별 임계치 조회 (빈 결과) 테스트"""
         response = await client.get("/api/v1/thresholds/type/nonexistent_type")
         assert response.status_code == 200
         assert response.json() == []
     
     @pytest.mark.asyncio
     async def test_threshold_type_validation(self, client):
-        """Test threshold_type validation"""
-        # Valid threshold_type values (as defined in Enum)
+        """임계치 타입 유효성 검사 테스트"""
+        # 유효한 threshold_type들 (Enum에 정의된 값만)
         valid_types = ["temperature", "humidity", "pcv_temperature"]
         
         for threshold_type in valid_types:

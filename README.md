@@ -67,34 +67,34 @@ Note: Data pipeline (Airflow ETL) lives in the main [flet-montrg](https://github
 | Service                          | Port  | Description                         |
 | -------------------------------- | ----- | ----------------------------------- |
 | web-service                      | 30000 | Integrated APIs Web (Svelte + Vite) |
-| integrated-swagger-service       | 30001 | Unified API docs                    |
-| thresholds-service               | 30002 | Threshold CRUD                      |
-| location-service                 | 30003 | Sensor location info                |
-| realtime-service                 | 30004 | Real-time data & threshold          |
+| thresholds-service               | 30001 | Threshold CRUD                      |
+| location-service                 | 30002 | Sensor location info                |
+| realtime-service                 | 30003 | Real-time data & threshold          |
+| integrated-swagger-service       | 30004 | Unified API docs & proxy            |
 | aggregation-service              | 30005 | Hourly aggregation                  |
 | alert-service                    | 30006 | Alert creation & management         |
 | alert-subscription-service       | 30007 | Alert subscriptions                 |
 | alert-notification-service       | 30008 | Notification history                |
-| sensor-threshold-mapping-service | 30009 | Sensor–threshold mapping            |
+| sensor-threshold-mapping-service | 30010 | Sensor–threshold mapping            |
 
-Integrated APIs Web (Svelte/Vite) is served via `web-service` (port 30000) and points to `integrated-swagger-service` for API.
+Integrated APIs Web (Svelte/Vite) is served via `web-service` (port 30000) and points to `integrated-swagger-service` (port 30004) for API/proxy.
 
 ```text
 ┌───────────────────────────────────────────────────────────┐
 │                Kubernetes Cluster (Kind)                  │
 ├───────────────────────────────────────────────────────────┤
-│  Thresholds(30002)      Location(30003)                   │
+│  Thresholds(30001)      Location(30002)                   │
 │        \                    /                             │
-│         +---> Sensor-Threshold-Mapping(30009)             │
+│         +---> Sensor-Threshold-Mapping(30010)             │
 │                         |                                 │
-│               Realtime(30004) ---> Aggregation(30005)     │
+│               Realtime(30003) ---> Aggregation(30005)     │
 │                                                           │
 │  Alert(30006) <--> Alert-Subscription(30007)              │
 │                              |                            │
 │                              v                            │
 │                   Alert-Notification(30008)               │
 │                                                           │
-│  Integrated-Swagger(30001)                                │
+│  Integrated-Swagger(30004)                                │
 └───────────────────────┬───────────────────────────────────┘
                         v
             PostgreSQL / TimescaleDB

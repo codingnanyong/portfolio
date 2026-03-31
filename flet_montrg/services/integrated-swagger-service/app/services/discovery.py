@@ -218,12 +218,12 @@ class ServiceDiscovery:
     async def _fallback_discovery(self) -> Dict[str, MonitoredService]:
         """k8s 클라이언트를 사용할 수 없을 때 fallback 서비스 디스커버리"""
         logger.info("Using fallback service discovery")
-        
-        fallback_services = {}
+
+        self.discovered_services = {}
         for service_name in settings.services_to_monitor:
-            fallback_services[service_name] = self._create_fallback_service(service_name)
-        
-        return fallback_services
+            self.discovered_services[service_name] = self._create_fallback_service(service_name)
+
+        return self.discovered_services
     
     async def refresh_services(self) -> Dict[str, MonitoredService]:
         """서비스 목록 새로고침"""
